@@ -1,1 +1,1 @@
-# my-awesome-wm
+# Setup of the Awesome WM
