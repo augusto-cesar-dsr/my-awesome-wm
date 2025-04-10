@@ -251,6 +251,10 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
+    awful.key({ "Control"        }, "1",      function () awful.util.spawn("bash /home/augusto/.config/bash/bin/rofi_change_display") end,
+              {description="display options", group="my managements"}),
+    awful.key({ modkey, "Control" }, "l",      function () awful.util.spawn("bash /home/augusto/.config/bash/bin/logout") end,
+              {description="power options", group="my managements"}),
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
