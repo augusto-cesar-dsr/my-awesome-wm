@@ -251,15 +251,17 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-    awful.key({                  }, "XF86AudioRaiseVolume",      function () awful.util.spawn("amixer -q sset Master 5%+") end,
+    awful.key({                  }, "XF86AudioRaiseVolume",      function () awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%") end,
               {description="increase sound", group="my managements"}),
-    awful.key({                  }, "XF86AudioLowerVolume",      function () awful.util.spawn("amixer -q sset Master 5%-") end,
+    awful.key({                  }, "XF86AudioLowerVolume",      function () awful.util.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%") end,
               {description="decrease sound", group="my managements"}),
-    awful.key({                  }, "XF86AudioMute",      function () awful.util.spawn("amixer -q sset Master toggle") end,
+    awful.key({                  }, "XF86AudioMute",      function () awful.util.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle") end,
               {description="mute sound", group="my managements"}),
     awful.key({ "Control"        }, "1",      function () awful.util.spawn("bash /home/augusto/.config/bash/bin/rofi_change_display") end,
               {description="display options", group="my managements"}),
     awful.key({ modkey, "Control" }, "l",      function () awful.util.spawn("bash /home/augusto/.config/bash/bin/logout") end,
+              {description="power options", group="my managements"}),
+    awful.key({ modkey,           }, "b",      function () awful.util.spawn("bash /home/augusto/.config/bash/bin/audio_manager") end,
               {description="power options", group="my managements"}),
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
