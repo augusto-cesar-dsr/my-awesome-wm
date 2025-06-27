@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+# Script para definir wallpaper do lock screen
+# Uso: ./set_lockscreen_wallpaper [caminho_da_imagem]
+
+CONFIG_DIR="$HOME/.config/awesome"
+LOCKSCREEN_WALLPAPER="$CONFIG_DIR/lockscreen-wallpaper.png"
+
+# Function to check if command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to convert image to PNG if needed
+convert_to_png() {
+    local input_file="$1"
+    local output_file="$2"
+    
+    if command_exists convert; then
+        convert "$input_file" "$output_file"
+        return $?
+    else
+        echo "ImageMagick não está instalado. Instale com: sudo apt install imagemagick"
+        return 1
+    fi
+}
+
+# Main function
+main() {
+    local input_image="$1"
+    
+    # If no argument provided, show current wallpaper and available options
+    if [[ -z "$input_image" ]]; then
+        echo "Uso: $0 [caminho_da_imagem]"
+        echo ""
+        echo "Wallpaper atual do lock screen:"
+        if [[ -f "$LOCKSCREEN_WALLPAPER" ]]; then
+            ls -la "$LOCKSCREEN_WALLPAPER"
+        else
+            echo "Nenhum wallpaper configurado"
+        fi
+        echo ""
+        echo "Wallpapers disponíveis em ~/Imagens/wallpapers:"
+        find "$HOME/Imagens/wallpapers" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) 2>/dev/null | head -10
+        return 0
+    fi
+    
+    # Check if input file exists
+    if [[ ! -f "$input_image" ]]; then
+        echo "Erro: Arquivo '$input_image' não encontrado!"
+        return 1
+    fi
+    
+    # Get file extension
+    local extension="${input_image##*.}"
+    extension=$(echo "$extension" | tr '[:upper:]' '[:lower:]')
+    
+    # If it's already PNG, just copy it
+    if [[ "$extension" == "png" ]]; then
+        cp "$input_image" "$LOCKSCREEN_WALLPAPER"
+        echo "Wallpaper do lock screen atualizado: $input_image"
+    else
+        # Convert to PNG
+        echo "Convertendo $input_image para PNG..."
+        if convert_to_png "$input_image" "$LOCKSCREEN_WALLPAPER"; then
+            echo "Wallpaper do lock screen atualizado e convertido para PNG: $input_image"
+        else
+            echo "Erro ao converter imagem para PNG"
+            return 1
+        fi
+    fi
+    
+    echo "Novo wallpaper salvo em: $LOCKSCREEN_WALLPAPER"
+    echo "Teste o lock screen com: Super + Ctrl + l"
+}
+
+main "$@"

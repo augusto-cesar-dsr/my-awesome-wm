@@ -60,19 +60,32 @@ confirm_action() {
 # Function to lock screen
 lock_screen() {
     if command_exists i3lock; then
-        # Try to find a wallpaper
-        local wallpaper=""
-        for path in "$HOME/Imagens/wallpapers" "$HOME/Pictures" "$HOME/.config/awesome/themes"; do
-            if [[ -d "$path" ]]; then
-                wallpaper=$(find "$path" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | head -1)
-                [[ -n "$wallpaper" ]] && break
-            fi
-        done
+        local config_wallpaper="$HOME/.config/awesome/lockscreen-wallpaper.png"
+        local temp_wallpaper="/tmp/lockscreen-resized.png"
         
-        if [[ -n "$wallpaper" ]]; then
-            i3lock -t -i "$wallpaper"
+        # Check if our config wallpaper exists
+        if [[ -f "$config_wallpaper" ]]; then
+            # Get screen resolution
+            local resolution=$(xrandr | grep '\*' | head -1 | awk '{print $1}')
+            
+            # If ImageMagick is available, resize the image to fit screen
+            if command_exists convert && [[ -n "$resolution" ]]; then
+                convert "$config_wallpaper" -resize "$resolution^" -gravity center -extent "$resolution" "$temp_wallpaper" 2>/dev/null
+                if [[ -f "$temp_wallpaper" ]]; then
+                    i3lock -i "$temp_wallpaper" --ignore-empty-password --show-failed-attempts
+                    # Clean up temp file
+                    rm -f "$temp_wallpaper"
+                else
+                    # Fallback to original image
+                    i3lock -i "$config_wallpaper" --ignore-empty-password --show-failed-attempts
+                fi
+            else
+                # Use original image without resizing
+                i3lock -i "$config_wallpaper" --ignore-empty-password --show-failed-attempts
+            fi
         else
-            i3lock -c 000000
+            # Fallback to solid color (dark theme)
+            i3lock -c 1e1e2e --ignore-empty-password --show-failed-attempts
         fi
     elif command_exists gnome-screensaver-command; then
         gnome-screensaver-command -l
