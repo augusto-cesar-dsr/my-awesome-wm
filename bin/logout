@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+
+# AwesomeWM Power Management Script
+# Enhanced logout/power options with rofi
+
+# Colors and styling for rofi
+ROFI_THEME="
+* {
+    background-color: #1e1e2e;
+    text-color: #cdd6f4;
+    border-color: #89b4fa;
+    selected-normal-background: #89b4fa;
+    selected-normal-foreground: #1e1e2e;
+}
+window {
+    width: 400px;
+    border: 2px;
+    border-radius: 10px;
+    padding: 20px;
+}
+listview {
+    lines: 6;
+    spacing: 5px;
+}
+element {
+    padding: 10px;
+    border-radius: 5px;
+}
+"
+
+# Icons for each option
+declare -A ICONS=(
+    ["🔒 Lock Screen"]="lock screen"
+    ["💤 Suspend"]="suspend"
+    ["🚪 Logout"]="logout"
+    ["🔄 Reboot"]="reboot"
+    ["⚡ Shutdown"]="poweroff"
+    ["💀 Kill Session"]="kill session"
+)
+
+# Function to check if command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to send notification
+notify() {
+    if command_exists notify-send; then
+        notify-send "Power Management" "$1" -t 3000
+    fi
+}
+
+# Function to confirm action
+confirm_action() {
+    local action="$1"
+    local confirmation=$(echo -e "Yes\nNo" | rofi -dmenu -p "Confirm $action?" -theme-str "$ROFI_THEME")
+    [[ "$confirmation" == "Yes" ]]
+}
+
+# Function to lock screen
+lock_screen() {
+    if command_exists i3lock; then
+        # Try to find a wallpaper
+        local wallpaper=""
+        for path in "$HOME/Imagens/wallpapers" "$HOME/Pictures" "$HOME/.config/awesome/themes"; do
+            if [[ -d "$path" ]]; then
+                wallpaper=$(find "$path" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | head -1)
+                [[ -n "$wallpaper" ]] && break
+            fi
+        done
+        
+        if [[ -n "$wallpaper" ]]; then
+            i3lock -t -i "$wallpaper"
+        else
+            i3lock -c 000000
+        fi
+    elif command_exists gnome-screensaver-command; then
+        gnome-screensaver-command -l
+    elif command_exists xscreensaver-command; then
+        xscreensaver-command -lock
+    else
+        notify "No lock screen program found!"
+        return 1
+    fi
+}
+
+# Function to suspend system
+suspend_system() {
+    if confirm_action "suspend"; then
+        notify "Suspending system..."
+        systemctl suspend
+    fi
+}
+
+# Function to logout
+logout_session() {
+    if confirm_action "logout"; then
+        notify "Logging out..."
+        if command_exists awesome-client; then
+            echo "awesome.quit()" | awesome-client
+        elif command_exists gnome-session-quit; then
+            gnome-session-quit --no-prompt
+        else
+            loginctl terminate-session "$XDG_SESSION_ID"
+        fi
+    fi
+}
+
+# Function to reboot system
+reboot_system() {
+    if confirm_action "reboot"; then
+        notify "Rebooting system..."
+        systemctl reboot
+    fi
+}
+
+# Function to shutdown system
+shutdown_system() {
+    if confirm_action "shutdown"; then
+        notify "Shutting down system..."
+        systemctl poweroff
+    fi
+}
+
+# Function to kill user session
+kill_session() {
+    if confirm_action "kill session"; then
+        notify "Killing user session..."
+        loginctl kill-user "$USER"
+    fi
+}
+
+# Main menu
+main() {
+    # Create options string
+    local options=""
+    for icon_option in "${!ICONS[@]}"; do
+        options+="$icon_option\n"
+    done
+    
+    # Show rofi menu
+    local selected=$(echo -e "$options" | rofi -dmenu -p "Power Options" -theme-str "$ROFI_THEME")
+    
+    # Handle selection
+    case "${ICONS[$selected]}" in
+        "lock screen")
+            lock_screen
+            ;;
+        "suspend")
+            suspend_system
+            ;;
+        "logout")
+            logout_session
+            ;;
+        "reboot")
+            reboot_system
+            ;;
+        "poweroff")
+            shutdown_system
+            ;;
+        "kill session")
+            kill_session
+            ;;
+        *)
+            [[ -n "$selected" ]] && notify "Invalid option: $selected"
+            ;;
+    esac
+}
+
+# Check if rofi is installed
+if ! command_exists rofi; then
+    echo "Error: rofi is not installed. Please install it with: sudo apt install rofi"
+    exit 1
+fi
+
+# Run main function
+main

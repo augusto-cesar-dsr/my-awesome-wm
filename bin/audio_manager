@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Lista os sinks disponíveis
+sinks=$(pactl list short sinks | cut -f2)
+
+# Usa o rofi pra selecionar
+selected_sink=$(echo "$sinks" | rofi -dmenu -p "Escolha saída de áudio")
+
+# Se o usuário cancelar (nada selecionado), sai
+[ -z "$selected_sink" ] && exit
+
+# Define o sink escolhido como default
+pactl set-default-sink "$selected_sink"
+
+# Move todas as streams de áudio pra ele
+for input in $(pactl list short sink-inputs | cut -f1); do
+    pactl move-sink-input "$input" "$selected_sink"
+done
+
+# Notificação opcional
+notify-send "Áudio redirecionado para:" "$selected_sink"
+

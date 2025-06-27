@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Script para controle de brilho
+BACKLIGHT_PATH="/sys/class/backlight/intel_backlight"
+BRIGHTNESS_FILE="$BACKLIGHT_PATH/brightness"
+MAX_BRIGHTNESS_FILE="$BACKLIGHT_PATH/max_brightness"
+
+if [ ! -f "$BRIGHTNESS_FILE" ] || [ ! -f "$MAX_BRIGHTNESS_FILE" ]; then
+    echo "Backlight device not found"
+    exit 1
+fi
+
+current=$(cat "$BRIGHTNESS_FILE")
+max=$(cat "$MAX_BRIGHTNESS_FILE")
+step=$((max / 10))  # 10% steps
+
+case "$1" in
+    "up")
+        new=$((current + step))
+        if [ $new -gt $max ]; then
+            new=$max
+        fi
+        echo $new | sudo tee "$BRIGHTNESS_FILE" > /dev/null
+        ;;
+    "down")
+        new=$((current - step))
+        if [ $new -lt 1 ]; then
+            new=1
+        fi
+        echo $new | sudo tee "$BRIGHTNESS_FILE" > /dev/null
+        ;;
+    *)
+        echo "Usage: $0 {up|down}"
+        exit 1
+        ;;
+esac

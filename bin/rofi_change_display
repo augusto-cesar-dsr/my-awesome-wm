@@ -1,0 +1,482 @@
+#!/usr/bin/env bash
+
+# AwesomeWM Display Management Script
+# Enhanced display configuration with rofi
+
+# Colors and styling for rofi
+ROFI_THEME="
+* {
+    background-color: #1e1e2e;
+    text-color: #cdd6f4;
+    border-color: #89b4fa;
+    selected-normal-background: #89b4fa;
+    selected-normal-foreground: #1e1e2e;
+}
+window {
+    width: 500px;
+    border: 2px;
+    border-radius: 10px;
+    padding: 20px;
+}
+listview {
+    lines: 10;
+    spacing: 5px;
+}
+element {
+    padding: 10px;
+    border-radius: 5px;
+}
+"
+
+# Function to check if command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to send notification
+notify() {
+    if command_exists notify-send; then
+        notify-send "Display Manager" "$1" -t 3000
+    fi
+}
+
+# Function to get connected displays
+get_displays() {
+    xrandr | grep " connected" | awk '{print $1}'
+}
+
+# Function to get display info
+get_display_info() {
+    local display="$1"
+    xrandr | grep "^$display" | head -1
+}
+
+# Function to detect displays automatically
+detect_displays() {
+    local displays=($(get_displays))
+    local primary=""
+    local secondary=""
+    
+    # Try to identify primary (usually eDP-1 for laptops, or first one)
+    for display in "${displays[@]}"; do
+        if [[ "$display" =~ eDP|LVDS ]]; then
+            primary="$display"
+        elif [[ -z "$primary" ]]; then
+            primary="$display"
+        elif [[ -z "$secondary" ]]; then
+            secondary="$display"
+        fi
+    done
+    
+    echo "$primary $secondary"
+}
+
+# Function to set wallpaper
+set_wallpaper() {
+    local wallpaper=""
+    for path in "$HOME/Imagens/wallpapers" "$HOME/Pictures" "$HOME/.config/awesome/themes"; do
+        if [[ -d "$path" ]]; then
+            wallpaper=$(find "$path" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" \) | head -1)
+            [[ -n "$wallpaper" ]] && break
+        fi
+    done
+    
+    if [[ -n "$wallpaper" ]] && command_exists feh; then
+        feh --no-fehbg --bg-fill "$wallpaper"
+    fi
+}
+
+# Function to configure display position
+configure_position() {
+    local position="$1"
+    local displays=($(detect_displays))
+    local primary="${displays[0]}"
+    local secondary="${displays[1]}"
+    
+    if [[ -z "$secondary" ]]; then
+        notify "Only one display detected!"
+        return 1
+    fi
+    
+    case "$position" in
+        "above")
+            xrandr --output "$secondary" --above "$primary" --auto
+            ;;
+        "below")
+            xrandr --output "$secondary" --below "$primary" --auto
+            ;;
+        "left")
+            xrandr --output "$secondary" --left-of "$primary" --auto
+            ;;
+        "right")
+            xrandr --output "$secondary" --right-of "$primary" --auto
+            ;;
+        "mirror")
+            xrandr --output "$secondary" --same-as "$primary" --auto
+            ;;
+    esac
+    
+    set_wallpaper
+    notify "Display positioned: $secondary $position $primary"
+}
+
+# Function to toggle display
+toggle_display() {
+    local display="$1"
+    local action="$2"
+    
+    case "$action" in
+        "enable")
+            xrandr --output "$display" --auto
+            notify "Enabled display: $display"
+            ;;
+        "disable")
+            xrandr --output "$display" --off
+            notify "Disabled display: $display"
+            ;;
+    esac
+    
+    set_wallpaper
+}
+
+# Function to set resolution
+set_resolution() {
+    local display="$1"
+    local resolution="$2"
+    
+    xrandr --output "$display" --mode "$resolution"
+    notify "Set $display resolution to $resolution"
+    set_wallpaper
+}
+
+# Function to get available audio sinks
+get_audio_sinks() {
+    if command_exists pactl; then
+        pactl list short sinks | awk '{print $2}'
+    fi
+}
+
+# Function to get current default sink
+get_current_sink() {
+    if command_exists pactl; then
+        pactl get-default-sink 2>/dev/null || pactl list short sinks | head -1 | awk '{print $2}'
+    fi
+}
+
+# Function to get sink description
+get_sink_description() {
+    local sink="$1"
+    if command_exists pactl; then
+        pactl list sinks | grep -A20 "Name: $sink" | grep "Description:" | sed 's/.*Description: //' | head -1
+    fi
+}
+
+# Function to get available card profiles
+get_card_profiles() {
+    if command_exists pactl; then
+        pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -E "^\s+output:" | grep "disponível: sim" | awk -F: '{print $2}' | awk '{print $1}'
+    fi
+}
+
+# Function to get current card profile
+get_current_profile() {
+    if command_exists pactl; then
+        pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep "Perfil ativo:" | sed 's/.*Perfil ativo: //' | xargs
+    fi
+}
+
+# Function to set card profile
+set_card_profile() {
+    local profile="$1"
+    if command_exists pactl; then
+        pactl set-card-profile alsa_card.pci-0000_00_1f.3 "$profile"
+        # Wait a moment for the profile to activate
+        sleep 1
+        # Set the new sink as default
+        local new_sink=$(pactl list short sinks | head -1 | awk '{print $2}')
+        if [[ -n "$new_sink" ]]; then
+            pactl set-default-sink "$new_sink"
+        fi
+    fi
+}
+
+# Function to manage audio output
+manage_audio() {
+    local action="$1"
+    
+    if ! command_exists pactl; then
+        notify "pactl não encontrado! Instale com: sudo apt install pulseaudio-utils"
+        return 1
+    fi
+    
+    case "$action" in
+        "list")
+            # Show available profiles with descriptions
+            local current_profile=$(get_current_profile)
+            local profile_list=""
+            
+            # Add common profiles with friendly names
+            local profiles=(
+                "output:analog-stereo|🎵 Alto-falantes Internos"
+                "output:hdmi-stereo|🔊 HDMI Estéreo"
+                "output:hdmi-surround|🎭 HDMI Surround 5.1"
+                "output:hdmi-stereo+input:analog-stereo|🔊 HDMI + Microfone"
+                "output:analog-stereo+input:analog-stereo|🎵 Interno + Microfone"
+            )
+            
+            for profile_info in "${profiles[@]}"; do
+                local profile=$(echo "$profile_info" | cut -d'|' -f1)
+                local description=$(echo "$profile_info" | cut -d'|' -f2)
+                local marker=""
+                
+                # Check if profile is available
+                if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "$profile.*disponível: sim"; then
+                    [[ "$profile" == "$current_profile" ]] && marker="✅ "
+                    profile_list+="${marker}${description}|${profile}\n"
+                fi
+            done
+            
+            local selected=$(echo -e "$profile_list" | rofi -dmenu -p "Selecionar Perfil de Áudio" -theme-str "$ROFI_THEME" -sep "|")
+            if [[ -n "$selected" ]]; then
+                local profile_name=$(echo "$selected" | cut -d'|' -f2)
+                set_card_profile "$profile_name"
+                notify "Perfil alterado para: $(echo "$selected" | cut -d'|' -f1 | sed 's/✅ //')"
+            fi
+            ;;
+        "hdmi")
+            # Switch to HDMI audio
+            if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "output:hdmi-stereo.*disponível: sim"; then
+                set_card_profile "output:hdmi-stereo"
+                notify "Áudio alterado para HDMI"
+            else
+                notify "HDMI não disponível!"
+                return 1
+            fi
+            ;;
+        "builtin")
+            # Switch to built-in speakers
+            if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "output:analog-stereo.*disponível: sim"; then
+                set_card_profile "output:analog-stereo"
+                notify "Áudio alterado para alto-falantes internos"
+            else
+                notify "Alto-falantes internos não disponíveis!"
+                return 1
+            fi
+            ;;
+        "toggle")
+            # Toggle between HDMI and built-in
+            local current_profile=$(get_current_profile)
+            if [[ "$current_profile" =~ hdmi ]]; then
+                manage_audio "builtin"
+            else
+                manage_audio "hdmi"
+            fi
+            ;;
+        "status")
+            # Show current audio status
+            local current_profile=$(get_current_profile)
+            local current_sink=$(get_current_sink)
+            local sink_desc=$(get_sink_description "$current_sink")
+            
+            local status="Status do Áudio:\n\n"
+            status+="🎵 Perfil Ativo: $current_profile\n"
+            status+="🔊 Sink Atual: ${sink_desc:-$current_sink}\n\n"
+            status+="Perfis Disponíveis:\n"
+            
+            # List available profiles
+            if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "output:analog-stereo.*disponível: sim"; then
+                status+="✅ Alto-falantes Internos\n"
+            fi
+            if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "output:hdmi-stereo.*disponível: sim"; then
+                status+="✅ HDMI Estéreo\n"
+            fi
+            
+            echo -e "$status" | rofi -dmenu -p "Status do Áudio" -theme-str "$ROFI_THEME"
+            ;;
+    esac
+}
+
+# Function to set audio sink (legacy support)
+set_audio_sink() {
+    local sink="$1"
+    
+    if command_exists pactl; then
+        pactl set-default-sink "$sink"
+        # Move all current streams to new sink
+        pactl list short sink-inputs | while read stream; do
+            local stream_id=$(echo "$stream" | cut -f1)
+            pactl move-sink-input "$stream_id" "$sink" 2>/dev/null
+        done
+    fi
+    
+    local description=$(get_sink_description "$sink")
+    notify "Áudio alterado para: ${description:-$sink}"
+}
+
+# Function to show current display status
+show_status() {
+    local status="Configuração Atual do Sistema:\n\n"
+    local displays=($(get_displays))
+    
+    # Display information
+    status+="📺 DISPLAYS:\n"
+    for display in "${displays[@]}"; do
+        local info=$(get_display_info "$display")
+        if echo "$info" | grep -q " connected"; then
+            if echo "$info" | grep -q "[0-9]x[0-9]"; then
+                local resolution=$(echo "$info" | grep -o "[0-9]*x[0-9]*" | head -1)
+                status+="✅ $display: ATIVO ($resolution)\n"
+            else
+                status+="⭕ $display: CONECTADO (inativo)\n"
+            fi
+        fi
+    done
+    
+    # Audio information
+    status+="\n🎵 ÁUDIO:\n"
+    if command_exists pactl; then
+        local current_profile=$(get_current_profile)
+        local current_sink=$(get_current_sink)
+        local sink_desc=$(get_sink_description "$current_sink")
+        
+        status+="🔊 Perfil: $current_profile\n"
+        status+="🎧 Saída: ${sink_desc:-$current_sink}\n"
+        
+        # Show available audio options
+        if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "output:analog-stereo.*disponível: sim"; then
+            status+="✅ Alto-falantes disponíveis\n"
+        fi
+        if pactl list cards | grep -A200 "alsa_card.pci-0000_00_1f.3" | grep -q "output:hdmi-stereo.*disponível: sim"; then
+            status+="✅ HDMI disponível\n"
+        fi
+    else
+        status+="❌ Gerenciador de áudio não disponível\n"
+    fi
+    
+    echo -e "$status" | rofi -dmenu -p "Status do Sistema" -theme-str "$ROFI_THEME"
+}
+
+# Function to auto-configure displays
+auto_configure() {
+    local displays=($(get_displays))
+    local count=${#displays[@]}
+    
+    case $count in
+        1)
+            notify "Single display detected - no configuration needed"
+            ;;
+        2)
+            # Default: external display to the right
+            configure_position "right"
+            ;;
+        *)
+            notify "Multiple displays detected - manual configuration recommended"
+            ;;
+    esac
+}
+
+# Main menu
+main() {
+    local displays=($(get_displays))
+    local options="📊 Show Status
+🔄 Auto Configure
+📺 Position External Display
+🖥️  Toggle Display
+🎵 Audio Output
+🔧 Advanced Options"
+    
+    local selected=$(echo -e "$options" | rofi -dmenu -p "Display Manager" -theme-str "$ROFI_THEME")
+    
+    case "$selected" in
+        "📊 Show Status")
+            show_status
+            ;;
+        "🔄 Auto Configure")
+            auto_configure
+            ;;
+        "📺 Position External Display")
+            local pos_options="🔼 Above
+🔽 Below  
+⬅️  Left
+➡️  Right
+🪞 Mirror"
+            local position=$(echo -e "$pos_options" | rofi -dmenu -p "Position" -theme-str "$ROFI_THEME")
+            case "$position" in
+                "🔼 Above") configure_position "above" ;;
+                "🔽 Below") configure_position "below" ;;
+                "⬅️  Left") configure_position "left" ;;
+                "➡️  Right") configure_position "right" ;;
+                "🪞 Mirror") configure_position "mirror" ;;
+            esac
+            ;;
+        "🖥️  Toggle Display")
+            local toggle_options=""
+            for display in "${displays[@]}"; do
+                toggle_options+="Enable $display\nDisable $display\n"
+            done
+            local toggle_choice=$(echo -e "$toggle_options" | rofi -dmenu -p "Toggle Display" -theme-str "$ROFI_THEME")
+            if [[ "$toggle_choice" =~ ^Enable ]]; then
+                local display=$(echo "$toggle_choice" | cut -d' ' -f2)
+                toggle_display "$display" "enable"
+            elif [[ "$toggle_choice" =~ ^Disable ]]; then
+                local display=$(echo "$toggle_choice" | cut -d' ' -f2)
+                toggle_display "$display" "disable"
+            fi
+            ;;
+        "🎵 Audio Output")
+            local audio_options="🔊 Alternar para HDMI
+🎵 Alternar para Alto-falantes
+🔄 Alternar Áudio (Toggle)
+📋 Listar Perfis de Áudio
+📊 Status do Áudio"
+            local audio_choice=$(echo -e "$audio_options" | rofi -dmenu -p "Gerenciar Áudio" -theme-str "$ROFI_THEME")
+            case "$audio_choice" in
+                "🔊 Alternar para HDMI") manage_audio "hdmi" ;;
+                "🎵 Alternar para Alto-falantes") manage_audio "builtin" ;;
+                "🔄 Alternar Áudio (Toggle)") manage_audio "toggle" ;;
+                "📋 Listar Perfis de Áudio") manage_audio "list" ;;
+                "📊 Status do Áudio") manage_audio "status" ;;
+            esac
+            ;;
+        "🔧 Advanced Options")
+            local adv_options="Set Resolution
+Refresh Displays
+Reset to Default"
+            local adv_choice=$(echo -e "$adv_options" | rofi -dmenu -p "Advanced" -theme-str "$ROFI_THEME")
+            case "$adv_choice" in
+                "Set Resolution")
+                    local display=$(echo -e "$(get_displays)" | rofi -dmenu -p "Select Display" -theme-str "$ROFI_THEME")
+                    if [[ -n "$display" ]]; then
+                        local resolutions=$(xrandr | grep -A 20 "^$display" | grep "^ " | awk '{print $1}' | head -10)
+                        local resolution=$(echo -e "$resolutions" | rofi -dmenu -p "Select Resolution" -theme-str "$ROFI_THEME")
+                        [[ -n "$resolution" ]] && set_resolution "$display" "$resolution"
+                    fi
+                    ;;
+                "Refresh Displays")
+                    xrandr --auto
+                    notify "Display configuration refreshed"
+                    ;;
+                "Reset to Default")
+                    for display in "${displays[@]}"; do
+                        xrandr --output "$display" --auto
+                    done
+                    notify "Reset to default configuration"
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+# Check dependencies
+if ! command_exists xrandr; then
+    echo "Error: xrandr is not installed"
+    exit 1
+fi
+
+if ! command_exists rofi; then
+    echo "Error: rofi is not installed. Please install it with: sudo apt install rofi"
+    exit 1
+fi
+
+# Run main function
+main
