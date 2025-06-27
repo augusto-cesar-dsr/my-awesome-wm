@@ -14,11 +14,11 @@ local naughty = require("naughty")
 -- Error handling
 require("config.error-handling")
 
--- Theme
-beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/custom/theme.lua")
-
--- Variables and layouts
+-- Variables and layouts (carregado ANTES do tema)
 require("config.variables")
+
+-- Theme (agora pode usar as variáveis globais)
+beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/custom/theme.lua")
 
 -- UI Components
 require("config.ui.menu")

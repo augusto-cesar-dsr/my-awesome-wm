@@ -1,6 +1,12 @@
 # AwesomeWM Configuration
 
-Configuração modular e organizada do AwesomeWM com foco em produtividade.
+Configuração modular e organizada do AwesomeWM com foco em produtividade e portabilidade.
+
+## Características
+
+- **Portável**: Usa variáveis dinâmicas baseadas no usuário atual (`$HOME`, `$USER`)
+- **Modular**: Estrutura organizada em módulos separados
+- **Inteligente**: Lógica automática para posicionamento de aplicações
 
 ## Estrutura
 
@@ -35,16 +41,16 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade.
 - 󰨞 **Tag 1**: Editor (Nvim/VSCode) + Terminal (primeiro terminal)
 - 󰒱 **Tag 2**: Chat (Slack)  
 - 󰖟 **Tag 3**: Browser (Chrome - sessão trabalho)
-- 󰉋 **Tag 4**: Arquivos (Nautilus)
-- 󰝚 **Tag 5**: Música
-- 󰍹 **Tag 6**: Terminal (terminais adicionais)
+- 󰍹 **Tag 4**: Terminal (ícone de terminal)
+- 󰉋 **Tag 5**: Arquivos (Nautilus)
+- 󰝚 **Tag 6**: Música
 - 󰊻 **Tag 7**: Documentos
 - 󰟴 **Tag 8**: Configurações
 - 󰐃 **Tag 9**: Diversos
 
 ### Lógica Inteligente de Terminais
-- **Primeiro terminal**: Abre na Tag 1 (junto com editor)
-- **Terminais subsequentes**: Abrem na Tag 6 (dedicada para terminais)
+- **Primeiro terminal**: Abre obrigatoriamente na Tag 1 (junto com editor)
+- **Terminais subsequentes**: Abrem na tag atual (onde o usuário estiver)
 
 ## Atalhos Principais
 

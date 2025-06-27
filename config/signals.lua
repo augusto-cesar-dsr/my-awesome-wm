@@ -62,12 +62,16 @@ client.connect_signal("mouse::enter", function(c)
   c:emit_signal("request::activate", "mouse_enter", { raise = false })
 end)
 
--- Border colors
+-- Border colors (com verificação de segurança)
 client.connect_signal("focus", function(c)
-  c.border_color = beautiful.border_focus
+  if beautiful.border_focus then
+    c.border_color = beautiful.border_focus
+  end
 end)
 client.connect_signal("unfocus", function(c)
-  c.border_color = beautiful.border_normal
+  if beautiful.border_normal then
+    c.border_color = beautiful.border_normal
+  end
 end)
 
 -- Startup notification

@@ -6,6 +6,9 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- Garantir que modkey está definido
 modkey = modkey or "Mod4"
 
+-- Caminho dinâmico para os scripts
+local scripts_path = awesome_config_path .. "/bin/"
+
 -- Global keys
 local globalkeys = gears.table.join(
 -- Awesome controls
@@ -89,25 +92,25 @@ local globalkeys = gears.table.join(
 
   -- Brightness controls
   awful.key({}, "XF86MonBrightnessUp", function()
-    awful.spawn("bash /home/augusto/.config/awesome/bin/brightness_control up")
+    awful.spawn("bash " .. scripts_path .. "brightness_control up")
   end, { description = "increase brightness", group = "my managements" }),
   awful.key({}, "XF86MonBrightnessDown", function()
-    awful.spawn("bash /home/augusto/.config/awesome/bin/brightness_control down")
+    awful.spawn("bash " .. scripts_path .. "brightness_control down")
   end, { description = "decrease brightness", group = "my managements" }),
 
   -- Display options
   awful.key({ "Control" }, "1", function()
-    awful.spawn("bash /home/augusto/.config/awesome/bin/rofi_change_display")
+    awful.spawn("bash " .. scripts_path .. "rofi_change_display")
   end, { description = "display options", group = "my managements" }),
 
   -- Power options
   awful.key({ modkey, "Control" }, "l", function()
-    awful.spawn("bash /home/augusto/.config/awesome/bin/logout")
+    awful.spawn("bash " .. scripts_path .. "logout")
   end, { description = "power options", group = "my managements" }),
 
   -- Audio manager (mudando de Super+b para Super+Shift+a para evitar conflito)
   awful.key({ modkey, "Shift" }, "a", function()
-    awful.spawn("bash /home/augusto/.config/awesome/bin/audio_manager")
+    awful.spawn("bash " .. scripts_path .. "audio_manager")
   end, { description = "audio manager", group = "my managements" }),
 
   -- Layout controls

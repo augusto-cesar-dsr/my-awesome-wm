@@ -7,28 +7,28 @@ local xresources = require("beautiful.xresources")
 local dpi = xresources.apply_dpi
 
 -- local gfs = require("gears.filesystem")
-local themes_path = "/home/augusto/.config/awesome/themes/"
+local themes_path = os.getenv("HOME") .. "/.config/awesome/themes/"
 
 local theme = {}
 
 theme.font = "JetBrainsMonoNL Nerd Font Medium 8"
 
-theme.bg_normal = "#555555"
-theme.bg_focus = "#535d6c"
-theme.bg_urgent = "#ff0000"
-theme.bg_minimize = "#444444"
-theme.bg_systray = theme.bg_normal
+theme.bg_normal = "#1a1a1a"
+theme.bg_focus = "#2d2416"
+theme.bg_urgent = "#8b2635"
+theme.bg_minimize = "#2a2a2a"
+theme.bg_systray = "#1a1a1a"
 
-theme.fg_normal = "#aaaaaa"
-theme.fg_focus = "#ffffff"
-theme.fg_urgent = "#ffffff"
-theme.fg_minimize = "#ffffff"
+theme.fg_normal = "#d4af37"
+theme.fg_focus = "#ffd700"
+theme.fg_urgent = "#ff6b6b"
+theme.fg_minimize = "#8a8a8a"
 
 theme.useless_gap = dpi(0)
 theme.border_width = dpi(1)
-theme.border_normal = "#000000"
-theme.border_focus = "#535d6c"
-theme.border_marked = "#91231c"
+theme.border_normal = "#3d3d3d"
+theme.border_focus = "#d4af37"
+theme.border_marked = "#8b2635"
 
 -- There are other variable sets
 -- overriding the custom one when
@@ -50,12 +50,12 @@ theme.taglist_shape_border_width = dpi(1)
 theme.taglist_shape_border_color = theme.border_normal
 
 -- Configurações adicionais para melhor renderização dos ícones
-theme.taglist_bg_focus = "#535d6c"
-theme.taglist_fg_focus = "#ffffff"
-theme.taglist_bg_occupied = "#444444"
-theme.taglist_fg_occupied = "#aaaaaa"
+theme.taglist_bg_focus = "#2d2416"
+theme.taglist_fg_focus = "#ffd700"
+theme.taglist_bg_occupied = "#1f1f1f"
+theme.taglist_fg_occupied = "#d4af37"
 theme.taglist_bg_empty = "transparent"
-theme.taglist_fg_empty = "#666666"
+theme.taglist_fg_empty = "#4a4a4a"
 
 -- Generate taglist squares:
 local taglist_square_size = dpi(4)

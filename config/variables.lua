@@ -1,6 +1,9 @@
 -- Global variables and settings
 local awful = require("awful")
 
+-- Caminhos dinâmicos baseados no usuário atual
+awesome_config_path = os.getenv("HOME") .. "/.config/awesome"
+
 -- Applications
 terminal = "x-terminal-emulator"
 editor = os.getenv("EDITOR") or "nvim"
@@ -47,9 +50,9 @@ awful.screen.connect_for_each_screen(function(s)
       "󰨞", -- Tag 1: Editor
       "󰒱", -- Tag 2: Chat
       "󰖟", -- Tag 3: Browser
-      "󰉋", -- Tag 4: Arquivos
-      "󰝚", -- Tag 5: Música
-      "󰍹", -- Tag 6: Terminal
+      "󰍹", -- Tag 4: Terminal (era 6)
+      "󰉋", -- Tag 5: Arquivos (era 4)
+      "󰝚", -- Tag 6: Música (era 5)
       "󰊻", -- Tag 7: Documentos
       "󰟴", -- Tag 8: Configurações
       "󰐃", -- Tag 9: Diversos

@@ -134,7 +134,7 @@ awful.rules.rules = {
     },
   },
 
-  -- Nautilus na Tag 4
+  -- Nautilus na Tag 5 (nova posição)
   {
     rule_any = {
       class = { "Nautilus", "nautilus", "Thunar", "thunar" },
@@ -151,14 +151,14 @@ awful.rules.rules = {
     },
   },
 
-  -- Terminal com lógica inteligente de posicionamento
+  -- Terminal: APENAS o primeiro vai para Tag 1, demais ficam onde abriram
   {
     rule_any = {
       class = {
         "Gnome-terminal",
         "gnome-terminal",
         "Alacritty",
-        "alacritty",
+        "alacritty", 
         "Kitty",
         "kitty",
         "X-terminal-emulator",
@@ -173,40 +173,34 @@ awful.rules.rules = {
     properties = {
       screen = 1,
       callback = function(c)
-        -- Função para contar terminais em uma tag específica
-        local function count_terminals_in_tag(tag_name)
-          local tag = awful.tag.find_by_name(awful.screen.focused(), tag_name)
-          if not tag then
+        -- Função para contar terminais na tag 1 específicamente
+        local function count_terminals_in_tag1()
+          local tag1 = awful.tag.find_by_name(awful.screen.focused(), "󰨞")
+          if not tag1 then
             return 0
           end
 
           local count = 0
-          for _, client in ipairs(tag:clients()) do
-            if is_terminal(client) then
+          for _, client in ipairs(tag1:clients()) do
+            if is_terminal(client) and client ~= c then -- Exclui o cliente atual
               count = count + 1
             end
           end
           return count
         end
 
-        -- Contar terminais na tag 1 (Editor)
-        local terminals_in_tag1 = count_terminals_in_tag("󰨞")
-
-        -- Decidir onde colocar o terminal
-        local target_tag_name
-        if terminals_in_tag1 >= 1 then
-          -- Se já há 1 ou mais terminais na tag 1, colocar na tag 6
-          target_tag_name = "󰍹" -- Tag 6: Terminal
-        else
-          -- Se não há terminais na tag 1, colocar na tag 1
-          target_tag_name = "󰨞" -- Tag 1: Editor
+        -- Se não há terminais na tag 1, este vai para lá
+        -- Caso contrário, fica na tag atual (onde foi aberto)
+        local terminals_in_tag1 = count_terminals_in_tag1()
+        
+        if terminals_in_tag1 == 0 then
+          -- Primeiro terminal: obrigatoriamente na Tag 1
+          local tag1 = awful.tag.find_by_name(awful.screen.focused(), "󰨞")
+          if tag1 then
+            c:move_to_tag(tag1)
+          end
         end
-
-        -- Mover o cliente para a tag escolhida
-        local target_tag = awful.tag.find_by_name(awful.screen.focused(), target_tag_name)
-        if target_tag then
-          c:move_to_tag(target_tag)
-        end
+        -- Demais terminais: ficam onde foram abertos (não fazemos nada)
       end,
     },
   },
