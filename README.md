@@ -141,10 +141,6 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
   - Clique: alternar mudo
   - Scroll: ajustar volume
 
-### Tmux Integration
-- **Tmux Help**: `Super + s` - Mostra ajuda do AwesomeWM, incluindo seção "tmux"
-- **Referência completa**: Todos os atalhos do tmux com prefix Ctrl-x
-
 ## Aplicações Auto-inicializadas
 
 1. **Nvim** (Tag 1) - delay 2s
