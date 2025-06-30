@@ -8,10 +8,7 @@ local beautiful = require("beautiful")
 local menu = require("config.ui.menu")
 
 -- Import widgets
-local cpu_widget = require("config.ui.widgets.cpu")
-local memory_widget = require("config.ui.widgets.memory")
-local network_widget = require("config.ui.widgets.network")
-local volume_widget = require("config.ui.widgets.volume")
+local widgets = require("config.ui.widgets")
 
 -- Keyboard map indicator and switcher
 local mykeyboardlayout = awful.widget.keyboardlayout()
@@ -113,13 +110,17 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist, -- Middle widget
     {           -- Right widgets
       layout = wibox.layout.fixed.horizontal,
-      cpu_widget.widget,
+      widgets.cpu.widget,
       wibox.widget.textbox(" | "),
-      memory_widget.widget,
+      widgets.memory.widget,
       wibox.widget.textbox(" | "),
-      network_widget.widget,
+      widgets.network.widget,
       wibox.widget.textbox(" | "),
-      volume_widget.widget,
+      widgets.temperature.widget,
+      wibox.widget.textbox(" | "),
+      widgets.battery.widget,
+      wibox.widget.textbox(" | "),
+      widgets.volume.widget,
       wibox.widget.textbox(" | "),
       mykeyboardlayout,
       wibox.widget.systray(),

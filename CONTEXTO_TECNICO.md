@@ -5,19 +5,21 @@
 - **Usuário:** $USER (dinâmico)
 - **Home:** $HOME (dinâmico)
 - **Config Path:** $HOME/.config/awesome
-- **AwesomeWM:** Versão em uso (verificar com `awesome --version`)
+- **AwesomeWM:** v4.3 (Too long) ✅ **ATUALIZADO**
+- **Bibliotecas Extras:** awesome-extra, vicious, lua-filesystem ✅ **INSTALADO**
 
-## 📋 Status do Projeto - Fase 1 CONCLUÍDA ✅
+## 📋 Status do Projeto - Fase 1 CONCLUÍDA + MELHORIAS ✅
 
 ### ✅ **Implementações Realizadas:**
 - **Configuração Base**: ✅ Completa e funcional
 - **Lock Screen**: ✅ Corrigido e funcionando
 - **Estrutura Modular**: ✅ Implementada
 - **Scripts Básicos**: ✅ Funcionando
-- **Widgets Básicos**: ✅ **IMPLEMENTADO** - CPU, RAM, Rede, Volume
-- **Scratchpads**: ✅ **IMPLEMENTADO** - Terminal, Calculadora, Notas
+- **Widgets Avançados**: ✅ **MODERNIZADOS** - 6 widgets com Vicious
+- **Scratchpads**: ✅ **MODERNIZADOS** - Biblioteca scratch.lua
 - **Scripts de Produtividade**: ✅ **IMPLEMENTADO** - Backup, Monitor de Recursos
 - **Melhorias no Tema**: ✅ **IMPLEMENTADO** - Transparências, cantos arredondados
+- **Bibliotecas Modernas**: ✅ **NOVO** - awesome-extra, vicious, scratch.lua
 
 ## 📁 Estrutura Atual da Configuração
 
@@ -34,6 +36,9 @@
 - `set_lockscreen_wallpaper` - ✅ **IMPLEMENTADO** - Gerenciador de wallpaper do lock
 - `backup_config` - ✅ **NOVO** - Script de backup automático das configurações
 - `resource_monitor` - ✅ **NOVO** - Monitor de recursos do sistema com alertas
+
+### Diretório `lib/` - ✅ **NOVO** - Bibliotecas Externas
+- `scratch.lua` - ✅ **NOVO** - Biblioteca moderna de scratchpads (github.com/notnew/awesome-scratch)
 
 ### Diretório `config/` - Configurações Modulares
 - `error-handling.lua` - Tratamento de erros
@@ -53,12 +58,14 @@
 - `wibar.lua` - ✅ **ATUALIZADO** - Barra superior com widgets integrados
 - `notifications.lua` - Configuração de notificações
 
-#### Subdiretório `config/ui/widgets/` - ✅ **NOVO DIRETÓRIO**
-- `init.lua` - ✅ **NOVO** - Inicializador dos widgets
-- `cpu.lua` - ✅ **NOVO** - Widget de CPU com cores dinâmicas
-- `memory.lua` - ✅ **NOVO** - Widget de memória RAM
-- `network.lua` - ✅ **NOVO** - Widget de rede com velocidades
-- `volume.lua` - ✅ **NOVO** - Widget de volume com controles de mouse
+#### Subdiretório `config/ui/widgets/` - ✅ **MODERNIZADO**
+- `init.lua` - ✅ **ATUALIZADO** - Inicializador centralizado dos widgets
+- `cpu.lua` - ✅ **MODERNIZADO** - Widget de CPU usando Vicious
+- `memory.lua` - ✅ **MODERNIZADO** - Widget de memória RAM usando Vicious
+- `network.lua` - ✅ **MODERNIZADO** - Widget de rede usando Vicious
+- `volume.lua` - ✅ **MANTIDO** - Widget de volume com controles de mouse
+- `temperature.lua` - ✅ **NOVO** - Widget de temperatura usando Vicious
+- `battery.lua` - ✅ **NOVO** - Widget de bateria usando Vicious (auto-oculta)
 
 ### Diretório `themes/`
 - `custom/` - ✅ **ATUALIZADO** - Tema personalizado com melhorias visuais
@@ -76,49 +83,65 @@
 8. **󰟴 Tag 8**: Configurações
 9. **󰐃 Tag 9**: Diversos
 
-## 🎮 Scratchpads Implementados ✅
+## 🎮 Scratchpads Modernizados ✅
+
+### Biblioteca Moderna Implementada
+- **Fonte**: https://github.com/notnew/awesome-scratch
+- **Localização**: `lib/scratch.lua`
+- **Funcionalidades**:
+  - Toggle inteligente de janelas
+  - Detecção automática de clientes existentes
+  - Suporte a regras personalizadas
+  - Compatibilidade total com AwesomeWM 4.3
 
 ### Janelas Flutuantes Rápidas
 - **F12**: Terminal dropdown (estilo Quake)
-  - Comando: `$TERMINAL`
+  - Comando: `$TERMINAL -name scratch-terminal`
+  - Regra: `{instance = "scratch-terminal"}`
   - Tamanho: 80% largura x 60% altura
   - Posição: Centro-superior da tela
-  - Classes detectadas: terminal, gnome-terminal, alacritty, kitty, xterm
   
 - **Super + F12**: Calculadora flutuante
   - Aplicação: gnome-calculator
-  - Tamanho: 30% largura x 40% altura
-  - Posição: Centro da tela
-  - Classes detectadas: calculator, gnome-calculator
+  - Regra: `{class = "Gnome-calculator"}`
+  - Tamanho: Auto-dimensionado
+  - Posição: Centralizado
 
 - **Super + Shift + F12**: Notas rápidas
   - Aplicação: Terminal com nvim
+  - Comando: `$TERMINAL -name scratch-notes -e nvim /tmp/awesome_notes.md`
+  - Regra: `{instance = "scratch-notes"}`
   - Arquivo: /tmp/awesome_notes.md
   - Tamanho: 60% largura x 70% altura
-  - Funcionalidade: Notas persistentes em Markdown
 
-## 📊 Widgets na Wibar ✅
+## 📊 Widgets Modernizados com Vicious ✅
 
-### Widgets Implementados
-1. **CPU Widget** (`config/ui/widgets/cpu.lua`)
+### Biblioteca Vicious Implementada
+- **Fonte**: awesome-extra package
+- **Funcionalidades**: Sistema de widgets robusto e eficiente
+- **Performance**: Cache interno e timers otimizados
+- **Compatibilidade**: Totalmente compatível com AwesomeWM 4.3
+
+### Widgets Implementados (6 Total)
+1. **CPU Widget** (`vicious.widgets.cpu`)
    - Atualização: A cada 3 segundos
-   - Comando: `top -bn1` para cálculo de uso
+   - Dados: Percentual de uso total da CPU
    - Cores: 
      - Verde (<60%): `#48dbfb`
      - Amarelo (60-80%): `#feca57`
      - Vermelho (>80%): `#ff6b6b`
    - Ícone: 󰻠
 
-2. **Memory Widget** (`config/ui/widgets/memory.lua`)
+2. **Memory Widget** (`vicious.widgets.mem`)
    - Atualização: A cada 5 segundos
-   - Comando: `free` para cálculo de percentual
-   - Mostra: Percentual de RAM usado
+   - Dados: Percentual de RAM usado
    - Cores: Mesma lógica do CPU
    - Ícone: 󰍛
 
-3. **Network Widget** (`config/ui/widgets/network.lua`)
+3. **Network Widget** (`vicious.widgets.net`)
    - Atualização: A cada 3 segundos
-   - Mostra: Velocidades de download/upload (↓/↑)
+   - Dados: Velocidades de download/upload (↓/↑)
+   - Interfaces: Auto-detecção (wlan0, eth0, enp0s3)
    - Formato: KB/s ou MB/s automaticamente
    - Cores baseadas na atividade:
      - Alta (>1MB/s): `#48dbfb`
@@ -126,7 +149,29 @@
      - Baixa: `#a4b0be`
    - Ícone: 󰖩
 
-4. **Volume Widget** (`config/ui/widgets/volume.lua`)
+4. **Temperature Widget** (`vicious.widgets.thermal`) - ✅ **NOVO**
+   - Atualização: A cada 10 segundos
+   - Dados: Temperatura da CPU (thermal_zone0)
+   - Cores baseadas na temperatura:
+     - Normal (<60°C): `#48dbfb`
+     - Quente (60-75°C): `#feca57`
+     - Crítico (>75°C): `#ff6b6b`
+   - Ícone: 󰔏
+
+5. **Battery Widget** (`vicious.widgets.bat`) - ✅ **NOVO**
+   - Atualização: A cada 30 segundos
+   - Dados: Percentual e status de carga
+   - Auto-oculta: Se não há bateria detectada
+   - Ícones dinâmicos:
+     - 󰂄 (carregando)
+     - 󰁹 (>80%)
+     - 󰂀 (60-80%)
+     - 󰁾 (40-60%)
+     - 󰁼 (20-40%)
+     - 󰁺 (<20%)
+   - Cores: Vermelho (<15%), Amarelo (<30%), Azul (normal)
+
+6. **Volume Widget** (mantido original)
    - Atualização: A cada 2 segundos
    - Controles interativos:
      - **Clique esquerdo**: Toggle mute

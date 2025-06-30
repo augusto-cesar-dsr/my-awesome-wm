@@ -5,33 +5,36 @@
 - **Lock Screen**: ✅ Corrigido e funcionando
 - **Estrutura Modular**: ✅ Implementada
 - **Scripts Básicos**: ✅ Funcionando
-- **Widgets Básicos**: ✅ **IMPLEMENTADO** - CPU, RAM, Rede, Volume
-- **Scratchpads**: ✅ **IMPLEMENTADO** - Terminal, Calculadora, Notas
+- **Widgets Avançados**: ✅ **MODERNIZADOS** - 6 widgets com Vicious
+- **Scratchpads**: ✅ **MODERNIZADOS** - Biblioteca scratch.lua moderna
 - **Scripts de Produtividade**: ✅ **IMPLEMENTADO** - Backup, Monitor de Recursos
 - **Melhorias no Tema**: ✅ **IMPLEMENTADO** - Transparências, cantos arredondados
+- **Bibliotecas Modernas**: ✅ **NOVO** - awesome-extra, vicious, scratch.lua
 
 ---
 
 ## 🚀 Melhorias Planejadas
 
 ### 1. Sistema de Widgets Avançados na Wibar
-**Prioridade: ALTA** 🔴 **PARCIALMENTE IMPLEMENTADO**
-- [x] ✅ Widget de CPU com gráfico em tempo real
-- [x] ✅ Widget de RAM com indicador visual
-- [ ] Widget de temperatura do sistema
-- [x] ✅ Widget de rede com velocidade up/down
-- [ ] Widget de bateria (se laptop) com estimativa
+**Prioridade: ALTA** 🔴 **IMPLEMENTADO COMPLETAMENTE** ✅
+- [x] ✅ Widget de CPU com gráfico em tempo real (Vicious)
+- [x] ✅ Widget de RAM com indicador visual (Vicious)
+- [x] ✅ Widget de temperatura do sistema (Vicious) - **NOVO**
+- [x] ✅ Widget de rede com velocidade up/down (Vicious)
+- [x] ✅ Widget de bateria (se laptop) com estimativa (Vicious) - **NOVO**
 - [x] ✅ Widget de volume com controle visual e ícones
 - [ ] Widget de clima com API externa
 - [ ] Widget de data/hora mais elaborado
 
 **Arquivos implementados:**
-- ✅ `config/ui/wibar.lua` - Atualizado
-- ✅ `config/ui/widgets/` - Criado
-- ✅ `config/ui/widgets/cpu.lua` - Implementado
-- ✅ `config/ui/widgets/memory.lua` - Implementado
-- ✅ `config/ui/widgets/network.lua` - Implementado
-- ✅ `config/ui/widgets/volume.lua` - Implementado
+- ✅ `config/ui/wibar.lua` - Atualizado com 6 widgets
+- ✅ `config/ui/widgets/` - Modernizado
+- ✅ `config/ui/widgets/cpu.lua` - **MODERNIZADO** com Vicious
+- ✅ `config/ui/widgets/memory.lua` - **MODERNIZADO** com Vicious
+- ✅ `config/ui/widgets/network.lua` - **MODERNIZADO** com Vicious
+- ✅ `config/ui/widgets/volume.lua` - Mantido (funcional)
+- ✅ `config/ui/widgets/temperature.lua` - **NOVO** com Vicious
+- ✅ `config/ui/widgets/battery.lua` - **NOVO** com Vicious
 
 ### 2. Gerenciamento de Wallpapers Dinâmico
 **Prioridade: MÉDIA** 🟡
@@ -58,19 +61,21 @@
 - Criar: `config/ui/notification-center.lua`
 
 ### 4. Scratchpads (Janelas Flutuantes Rápidas)
-**Prioridade: ALTA** 🔴 **IMPLEMENTADO COMPLETAMENTE** ✅
-- [x] ✅ Terminal dropdown (estilo Quake)
-- [x] ✅ Calculadora rápida
-- [x] ✅ Notas rápidas/sticky notes (com nvim)
+**Prioridade: ALTA** 🔴 **MODERNIZADO COMPLETAMENTE** ✅
+- [x] ✅ Terminal dropdown (estilo Quake) - **MODERNIZADO**
+- [x] ✅ Calculadora rápida - **MODERNIZADO**
+- [x] ✅ Notas rápidas/sticky notes (com nvim) - **MODERNIZADO**
 - [ ] Monitor de sistema flutuante
 - [ ] Player de música flutuante
 
 **Arquivos implementados:**
-- ✅ `config/scratchpads.lua` - Implementado
-- ✅ Keybindings adicionados em `config/keys/global.lua`
-- ✅ **F12**: Terminal dropdown
-- ✅ **Super + F12**: Calculadora
-- ✅ **Super + Shift + F12**: Notas com nvim
+- ✅ `lib/scratch.lua` - **NOVO** - Biblioteca moderna (github.com/notnew/awesome-scratch)
+- ✅ `config/scratchpads.lua` - **MODERNIZADO** com nova biblioteca
+- ✅ `config/rules.lua` - **ATUALIZADO** com regras específicas
+- ✅ Keybindings atualizados em `config/keys/global.lua`
+- ✅ **F12**: Terminal dropdown com regras específicas
+- ✅ **Super + F12**: Calculadora com detecção inteligente
+- ✅ **Super + Shift + F12**: Notas com nvim e arquivo persistente
 
 ### 5. Melhorias no Tema Visual
 **Prioridade: ALTA** 🔴 **IMPLEMENTADO PARCIALMENTE** ✅
@@ -94,10 +99,25 @@
 - [ ] Launcher de aplicações inteligente
 - [ ] Sistema de bookmarks/favoritos
 
-**Arquivos implementados:**
-- ✅ `bin/backup_config` - Script completo de backup
-- ✅ `bin/resource_monitor` - Monitor de CPU, RAM, disco, temperatura
-- ✅ Keybindings: **Super + Shift + b** (backup), **Super + Shift + r** (monitor)
+### 7. Bibliotecas Modernas e Atualizações
+**Prioridade: ALTA** 🔴 **IMPLEMENTADO COMPLETAMENTE** ✅
+- [x] ✅ Instalação do awesome-extra (vicious, revelation, tyrannical)
+- [x] ✅ Biblioteca scratch.lua moderna para scratchpads
+- [x] ✅ Migração de widgets para Vicious (mais eficiente)
+- [x] ✅ Sistema de cache e performance otimizada
+- [x] ✅ Compatibilidade total com AwesomeWM 4.3
+
+**Bibliotecas implementadas:**
+- ✅ `awesome-extra` - Pacote com bibliotecas adicionais
+- ✅ `vicious` - Sistema de widgets robusto
+- ✅ `lua-filesystem` - Dependência adicional
+- ✅ `lib/scratch.lua` - Biblioteca moderna de scratchpads
+- ✅ Widgets migrados para Vicious (CPU, RAM, Rede, Temperatura, Bateria)
+
+**Arquivos modificados:**
+- ✅ `config/ui/widgets/*.lua` - Todos modernizados com Vicious
+- ✅ `config/scratchpads.lua` - Reescrito com biblioteca moderna
+- ✅ `config/rules.lua` - Regras específicas para scratchpads
 
 ### 7. Integração com Ferramentas Externas
 **Prioridade: BAIXA** 🟢
@@ -125,11 +145,13 @@
 
 ## 🛠️ Implementação Sugerida por Fases
 
-### **Fase 1 - Essenciais** ✅ **CONCLUÍDA**
-1. ✅ Widgets básicos na wibar (CPU, RAM, rede, volume)
-2. ✅ Scratchpad para terminal dropdown + calculadora + notas
-3. ✅ Melhorias básicas no tema (transparências, cantos arredondados)
+### **Fase 1 - Essenciais** ✅ **CONCLUÍDA + MODERNIZADA**
+1. ✅ Widgets avançados na wibar (6 widgets com Vicious)
+2. ✅ Scratchpads modernizados (biblioteca scratch.lua)
+3. ✅ Melhorias avançadas no tema (transparências, cantos arredondados)
 4. ✅ Scripts de backup e monitoramento
+5. ✅ **NOVO**: Bibliotecas modernas (awesome-extra, vicious)
+6. ✅ **NOVO**: Widgets de temperatura e bateria
 
 ### **Fase 2 - Produtividade** (2-3 sessões) 🔄 **PRÓXIMA**
 1. [ ] Sistema de wallpapers dinâmico
@@ -246,6 +268,7 @@ cp -r ~/.config/awesome ~/.config/awesome.backup.$(date +%Y%m%d_%H%M%S)
 
 ---
 
-**Última atualização:** 30 de Junho de 2025 - 18:00 UTC
-**Status:** ✅ **FASE 1 CONCLUÍDA** - Widgets, Scratchpads, Scripts e Tema implementados com sucesso!
+**Última atualização:** 30 de Junho de 2025 - 19:00 UTC
+**Status:** ✅ **FASE 1 CONCLUÍDA + MODERNIZADA** - Widgets, Scratchpads, Scripts, Tema e Bibliotecas modernas implementados com sucesso!
 **Próximo:** Fase 2 - Sistema de wallpapers dinâmico e centro de notificações
+**Melhorias:** Bibliotecas modernas (Vicious, scratch.lua), 6 widgets funcionais, scratchpads robustos

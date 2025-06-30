@@ -49,6 +49,53 @@ awful.rules.rules = {
     },
   },
 
+  -- Scratchpad rules
+  {
+    rule_any = {
+      instance = {
+        "scratch-terminal",
+        "scratch-notes",
+      }
+    },
+    properties = {
+      floating = true,
+      ontop = true,
+      above = true,
+      skip_taskbar = true,
+      sticky = true,
+      placement = awful.placement.centered,
+    }
+  },
+
+  {
+    rule = { instance = "scratch-terminal" },
+    properties = {
+      width = function(c) return c.screen.workarea.width * 0.8 end,
+      height = function(c) return c.screen.workarea.height * 0.6 end,
+    }
+  },
+
+  {
+    rule = { instance = "scratch-notes" },
+    properties = {
+      width = function(c) return c.screen.workarea.width * 0.6 end,
+      height = function(c) return c.screen.workarea.height * 0.7 end,
+    }
+  },
+
+  {
+    rule = { class = "Gnome-calculator" },
+    properties = {
+      floating = true,
+      ontop = true,
+      above = true,
+      skip_taskbar = true,
+      placement = awful.placement.centered,
+      width = function(c) return c.screen.workarea.width * 0.3 end,
+      height = function(c) return c.screen.workarea.height * 0.4 end,
+    }
+  },
+
   -- Floating clients
   {
     rule_any = {
