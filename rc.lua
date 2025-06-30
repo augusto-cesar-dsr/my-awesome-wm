@@ -29,6 +29,9 @@ require("config.ui.notifications")
 require("config.keys.global")
 require("config.keys.client")
 
+-- Scratchpads
+require("config.scratchpads")
+
 -- Rules
 require("config.rules")
 

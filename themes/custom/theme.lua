@@ -13,10 +13,11 @@ local theme = {}
 
 theme.font = "JetBrainsMonoNL Nerd Font Medium 8"
 
-theme.bg_normal = "#1a1a1a"
-theme.bg_focus = "#2d2416"
+-- Cores modernas com transparência
+theme.bg_normal = "#1a1a1aee"  -- Transparência adicionada
+theme.bg_focus = "#2d2416ee"
 theme.bg_urgent = "#8b2635"
-theme.bg_minimize = "#2a2a2a"
+theme.bg_minimize = "#2a2a2aaa"
 theme.bg_systray = "#1a1a1a"
 
 theme.fg_normal = "#d4af37"
@@ -24,10 +25,12 @@ theme.fg_focus = "#ffd700"
 theme.fg_urgent = "#ff6b6b"
 theme.fg_minimize = "#8a8a8a"
 
-theme.useless_gap = dpi(0)
-theme.border_width = dpi(1)
+-- Melhorias visuais
+theme.useless_gap = dpi(4)  -- Espaçamento entre janelas
+theme.border_width = dpi(2)  -- Bordas mais visíveis
 theme.border_normal = "#3d3d3d"
 theme.border_focus = "#d4af37"
+theme.border_radius = dpi(8)  -- Cantos arredondados
 theme.border_marked = "#8b2635"
 
 -- There are other variable sets
@@ -74,6 +77,22 @@ theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(taglist_square_
 theme.menu_submenu_icon = themes_path .. "custom/submenu.png"
 theme.menu_height = dpi(15)
 theme.menu_width = dpi(100)
+
+-- Wibar configuration
+theme.wibar_height = dpi(26)  -- Altura da barra
+theme.wibar_bg = "#1a1a1aee"  -- Fundo com transparência
+theme.wibar_fg = "#d4af37"
+theme.wibar_border_width = dpi(0)
+theme.wibar_border_color = "#3d3d3d"
+
+-- Notification improvements
+theme.notification_bg = "#1a1a1aee"
+theme.notification_fg = "#d4af37"
+theme.notification_border_width = dpi(2)
+theme.notification_border_color = "#d4af37"
+theme.notification_shape = function(cr, width, height)
+  require("gears.shape").rounded_rect(cr, width, height, dpi(8))
+end
 
 -- You can add as many variables as
 -- you wish and access them by using

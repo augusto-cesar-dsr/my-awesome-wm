@@ -2,43 +2,66 @@
 
 ## 🖥️ Informações do Sistema
 - **OS:** Linux
-- **Usuário:** augusto
-- **Home:** /home/augusto
-- **Config Path:** /home/augusto/.config/awesome
+- **Usuário:** $USER (dinâmico)
+- **Home:** $HOME (dinâmico)
+- **Config Path:** $HOME/.config/awesome
 - **AwesomeWM:** Versão em uso (verificar com `awesome --version`)
+
+## 📋 Status do Projeto - Fase 1 CONCLUÍDA ✅
+
+### ✅ **Implementações Realizadas:**
+- **Configuração Base**: ✅ Completa e funcional
+- **Lock Screen**: ✅ Corrigido e funcionando
+- **Estrutura Modular**: ✅ Implementada
+- **Scripts Básicos**: ✅ Funcionando
+- **Widgets Básicos**: ✅ **IMPLEMENTADO** - CPU, RAM, Rede, Volume
+- **Scratchpads**: ✅ **IMPLEMENTADO** - Terminal, Calculadora, Notas
+- **Scripts de Produtividade**: ✅ **IMPLEMENTADO** - Backup, Monitor de Recursos
+- **Melhorias no Tema**: ✅ **IMPLEMENTADO** - Transparências, cantos arredondados
 
 ## 📁 Estrutura Atual da Configuração
 
 ### Arquivos Principais
-- `rc.lua` - Arquivo principal de configuração
-- `README.md` - Documentação da configuração
+- `rc.lua` - ✅ **ATUALIZADO** - Arquivo principal de configuração
+- `README.md` - ✅ **ATUALIZADO** - Documentação da configuração
+- `MELHORIAS_TODO.md` - ✅ **ATUALIZADO** - Lista de melhorias e status do projeto
 
 ### Diretório `bin/` - Scripts Executáveis
 - `audio_manager` - Gerenciador de áudio
 - `brightness_control` - Controle de brilho
-- `logout` - ✅ **RECÉM CORRIGIDO** - Opções de energia com i3lock
+- `logout` - ✅ **CORRIGIDO** - Opções de energia com i3lock
 - `rofi_change_display` - Opções de display
-- `set_lockscreen_wallpaper` - ✅ **NOVO** - Gerenciador de wallpaper do lock
+- `set_lockscreen_wallpaper` - ✅ **IMPLEMENTADO** - Gerenciador de wallpaper do lock
+- `backup_config` - ✅ **NOVO** - Script de backup automático das configurações
+- `resource_monitor` - ✅ **NOVO** - Monitor de recursos do sistema com alertas
 
 ### Diretório `config/` - Configurações Modulares
 - `error-handling.lua` - Tratamento de erros
 - `variables.lua` - Variáveis globais e configurações
 - `rules.lua` - Regras de janelas
 - `signals.lua` - Sinais e eventos
-- `autostart.lua` - Aplicações que iniciam automaticamente
+- `autostart.lua` - ✅ **ATUALIZADO** - Aplicações que iniciam automaticamente
+- `scratchpads.lua` - ✅ **NOVO** - Configuração de scratchpads (janelas flutuantes)
 
 #### Subdiretório `config/keys/`
-- `global.lua` - Atalhos globais
+- `global.lua` - ✅ **ATUALIZADO** - Atalhos globais com novos keybindings
 - `client.lua` - Atalhos de cliente
 - `client-buttons.lua` - Botões do mouse
 
 #### Subdiretório `config/ui/`
 - `menu.lua` - Menu principal
-- `wibar.lua` - Barra superior
+- `wibar.lua` - ✅ **ATUALIZADO** - Barra superior com widgets integrados
 - `notifications.lua` - Configuração de notificações
 
+#### Subdiretório `config/ui/widgets/` - ✅ **NOVO DIRETÓRIO**
+- `init.lua` - ✅ **NOVO** - Inicializador dos widgets
+- `cpu.lua` - ✅ **NOVO** - Widget de CPU com cores dinâmicas
+- `memory.lua` - ✅ **NOVO** - Widget de memória RAM
+- `network.lua` - ✅ **NOVO** - Widget de rede com velocidades
+- `volume.lua` - ✅ **NOVO** - Widget de volume com controles de mouse
+
 ### Diretório `themes/`
-- `custom/` - Tema personalizado
+- `custom/` - ✅ **ATUALIZADO** - Tema personalizado com melhorias visuais
 
 ## 🏷️ Configuração de Tags
 
@@ -53,146 +76,212 @@
 8. **󰟴 Tag 8**: Configurações
 9. **󰐃 Tag 9**: Diversos
 
-### Lógica Inteligente de Terminais
-- **Primeiro terminal**: Abre obrigatoriamente na Tag 1 (junto com editor)
-- **Terminais subsequentes**: Abrem na tag atual (onde o usuário estiver)
+## 🎮 Scratchpads Implementados ✅
 
-## 🚀 Aplicações Configuradas
+### Janelas Flutuantes Rápidas
+- **F12**: Terminal dropdown (estilo Quake)
+  - Comando: `$TERMINAL`
+  - Tamanho: 80% largura x 60% altura
+  - Posição: Centro-superior da tela
+  - Classes detectadas: terminal, gnome-terminal, alacritty, kitty, xterm
+  
+- **Super + F12**: Calculadora flutuante
+  - Aplicação: gnome-calculator
+  - Tamanho: 30% largura x 40% altura
+  - Posição: Centro da tela
+  - Classes detectadas: calculator, gnome-calculator
 
-### Aplicações Principais
-- **Terminal:** `x-terminal-emulator`
-- **Editor:** `nvim` (ou $EDITOR)
-- **Browser:** `google-chrome-stable --profile-directory='Profile 1'`
-- **File Manager:** `nautilus`
-- **Modkey:** Super/Windows (Mod4)
+- **Super + Shift + F12**: Notas rápidas
+  - Aplicação: Terminal com nvim
+  - Arquivo: /tmp/awesome_notes.md
+  - Tamanho: 60% largura x 70% altura
+  - Funcionalidade: Notas persistentes em Markdown
 
-### Auto-start (com delays inteligentes)
-1. **Nvim** (Tag 1) - delay 2s
-2. **Slack** (Tag 2) - delay 4s
-3. **Chrome** (Tag 3) - delay 6s com perfil de trabalho
+## 📊 Widgets na Wibar ✅
 
-### Aplicações de Sistema
-- `nm-applet` - Network manager
-- `blueman-applet` - Bluetooth
-- `pasystray` - Audio control
+### Widgets Implementados
+1. **CPU Widget** (`config/ui/widgets/cpu.lua`)
+   - Atualização: A cada 3 segundos
+   - Comando: `top -bn1` para cálculo de uso
+   - Cores: 
+     - Verde (<60%): `#48dbfb`
+     - Amarelo (60-80%): `#feca57`
+     - Vermelho (>80%): `#ff6b6b`
+   - Ícone: 󰻠
 
-## 🎨 Configurações Visuais Atuais
+2. **Memory Widget** (`config/ui/widgets/memory.lua`)
+   - Atualização: A cada 5 segundos
+   - Comando: `free` para cálculo de percentual
+   - Mostra: Percentual de RAM usado
+   - Cores: Mesma lógica do CPU
+   - Ícone: 󰍛
 
-### Layouts Disponíveis
-1. `awful.layout.suit.fair`
-2. `awful.layout.suit.fair.horizontal`
-3. `awful.layout.suit.max`
-4. `awful.layout.suit.tile`
-5. `awful.layout.suit.floating`
+3. **Network Widget** (`config/ui/widgets/network.lua`)
+   - Atualização: A cada 3 segundos
+   - Mostra: Velocidades de download/upload (↓/↑)
+   - Formato: KB/s ou MB/s automaticamente
+   - Cores baseadas na atividade:
+     - Alta (>1MB/s): `#48dbfb`
+     - Média (>100KB/s): `#feca57`
+     - Baixa: `#a4b0be`
+   - Ícone: 󰖩
 
-### Wibar (Barra Superior)
-- **Posição:** Top
-- **Altura:** 18px (mínima para mostrar ícones)
-- **Widgets Atuais:**
-  - Menu launcher
-  - Tag list
-  - Prompt box
-  - Task list (centro)
-  - Keyboard layout
-  - System tray
-  - Text clock
-  - Layout box
+4. **Volume Widget** (`config/ui/widgets/volume.lua`)
+   - Atualização: A cada 2 segundos
+   - Controles interativos:
+     - **Clique esquerdo**: Toggle mute
+     - **Scroll up**: Volume +5%
+     - **Scroll down**: Volume -5%
+   - Ícones dinâmicos:
+     - 󰖁 (mudo/0%)
+     - 󰕿 (<30%)
+     - 󰖀 (30-70%)
+     - 󰕾 (>70%)
+   - Integração: PulseAudio via `pactl`
+
+## 🛠️ Scripts de Produtividade ✅
+
+### Backup Automático (`bin/backup_config`)
+- **Função**: Backup completo da configuração AwesomeWM
+- **Localização**: `$HOME/.config/awesome_backups/`
+- **Formato**: `awesome_backup_YYYYMMDD_HHMMSS`
+- **Funcionalidades**:
+  - Criação automática de diretório de backup
+  - Informações detalhadas (tamanho, data, usuário)
+  - Lista de arquivos principais incluídos
+  - Limpeza automática (mantém 5 backups mais recentes)
+  - Lista de backups disponíveis
+- **Keybinding**: `Super + Shift + b`
+- **Portabilidade**: Usa variáveis `$HOME` e `$USER`
+
+### Monitor de Recursos (`bin/resource_monitor`)
+- **Função**: Monitora CPU, RAM, disco, temperatura e bateria
+- **Modos de Operação**:
+  - `monitor`: Execução contínua com alertas
+  - `status`: Mostra status atual do sistema
+  - `help`: Ajuda e informações dos thresholds
+- **Thresholds de Alerta**:
+  - CPU: 85%
+  - Memória: 85%
+  - Disco: 90%
+  - Temperatura: 75°C
+- **Notificações**: Via `notify-send` com urgência crítica
+- **Keybinding**: `Super + Shift + r` (modo status)
+- **Detecção**: Bateria automática para laptops
+
+## 🎨 Melhorias no Tema ✅
+
+### Características Visuais Implementadas
+- **Transparências**: Backgrounds com alpha channel
+  - `bg_normal`: `#1a1a1aee`
+  - `bg_focus`: `#2d2416ee`
+  - `bg_minimize`: `#2a2a2aaa`
+- **Cantos Arredondados**: `border_radius = 8px`
+- **Espaçamento**: `useless_gap = 4px` entre janelas
+- **Bordas**: Largura aumentada para 2px
+- **Wibar**: 
+  - Altura otimizada: 26px
+  - Background com transparência
+  - Integração com tema
+- **Notificações**: 
+  - Cantos arredondados via `gears.shape`
+  - Transparência e bordas personalizadas
+
+## 🔧 Configurações Técnicas
+
+### Dependências Instaladas e Verificadas
+- `pasystray` - ✅ **INSTALADO** - Controle de áudio na systray
+- `nm-applet` - ✅ **DISPONÍVEL** - Gerenciador de rede
+- `blueman-applet` - ✅ **DISPONÍVEL** - Gerenciador de bluetooth
+- `gnome-calculator` - ✅ **DISPONÍVEL** - Para scratchpad calculadora
+
+### Autostart Melhorado
+- **Chrome**: Detecção aprimorada de processos browser principais
+- **Widgets de Sistema**: Inicialização com delay duplo para garantir systray
+- **Debug**: Sistema de notificações para troubleshooting
+- **Delays otimizados**:
+  - Terminal + Nvim: 2s
+  - Slack: 4s
+  - Chrome: 8s (aumentado)
+  - System widgets: 3s
+
+### Keybindings Implementados
+```lua
+-- Scratchpads
+F12                    -- Terminal dropdown
+Super + F12            -- Calculadora
+Super + Shift + F12    -- Notas (nvim)
+
+-- Scripts de Produtividade  
+Super + Shift + b      -- Backup configuração
+Super + Shift + r      -- Status recursos
+
+-- Controles de Volume (widget)
+Clique no widget       -- Toggle mute
+Scroll up no widget    -- Volume +5%
+Scroll down no widget  -- Volume -5%
+
+-- Existentes (mantidos)
+Super + Shift + a      -- Audio manager
+Super + Ctrl + l       -- Power options
+Ctrl + 1               -- Display options
+```
 
 ## 🔐 Sistema de Lock Screen
 
-### Configuração Atual (RECÉM IMPLEMENTADA)
-- **Lock Program:** i3lock (versão 2.14.1)
-- **Wallpaper:** `/home/augusto/.config/awesome/lockscreen-wallpaper.png`
+### Configuração Atual
+- **Lock Program:** i3lock
+- **Wallpaper:** `$HOME/.config/awesome/lockscreen-wallpaper.png`
 - **Redimensionamento:** Automático via ImageMagick
 - **Fallback:** Cor sólida (#1e1e2e) se wallpaper não disponível
 
 ### Wallpapers Disponíveis
-- **Pasta Principal:** `/home/augusto/Imagens/wallpapers/`
-- **Wallpapers Encontrados:**
-  - `samurai-yellow-moon.jpg`
-  - `samurai-red-moon.png` ✅ **ATUAL NO LOCK**
-  - `bleach-hueco-mundo.png`
-  - `kaiju-n8.jpeg`
-  - `kaiju-n8.png`
-  - `gldt93.png`
-  - `bleach-hueco-mundo.jpg`
+- **Pasta Principal:** `$HOME/Imagens/wallpapers/`
+- **Wallpapers Suportados:** jpg, png, jpeg
+- **Atual no Lock:** samurai-red-moon.png
 
-## ⌨️ Atalhos Principais Configurados
+## 📈 Status de Implementação Detalhado
 
-### Aplicações
-- `Super + Return`: Terminal
-- `Super + b`: Browser (Chrome)
-- `Super + e`: Gerenciador de arquivos (Nautilus)
-- `Super + d`: Rofi launcher
-- `Super + r`: Prompt de comando
+### ✅ **FASE 1 - ESSENCIAIS (CONCLUÍDA)**
+- [x] 4 Widgets funcionais na wibar (CPU, RAM, Rede, Volume)
+- [x] 3 Scratchpads com keybindings funcionais
+- [x] 2 Scripts de produtividade (Backup, Monitor)
+- [x] Melhorias visuais no tema (transparências, cantos arredondados)
+- [x] Controles de mouse integrados (volume widget)
+- [x] Sistema de backup automático
+- [x] Monitor de recursos com alertas
+- [x] Documentação completa atualizada
 
-### Sistema
-- `Super + Ctrl + r`: Reiniciar AwesomeWM
-- `Super + Shift + q`: Sair do AwesomeWM
-- `Super + Ctrl + l`: **Lock Screen** ✅ **FUNCIONANDO**
+### 🔄 **FASE 2 - PRODUTIVIDADE (PRÓXIMA)**
+- [ ] Sistema de wallpapers dinâmico
+- [ ] Centro de notificações com histórico
+- [ ] Widgets adicionais (temperatura, bateria, clima)
+- [ ] Timer Pomodoro integrado
+- [ ] Melhorias avançadas no tema
 
-### Gerenciamento Personalizado
-- `XF86AudioRaiseVolume/LowerVolume/Mute`: Controle de volume
-- `XF86MonBrightnessUp/Down`: Controle de brilho
-- `Ctrl + 1`: Opções de display
-- `Super + Shift + a`: Gerenciador de áudio
+### 🔄 **FASE 3 - AVANÇADAS (FUTURO)**
+- [ ] Integrações externas (tmux, git, docker)
+- [ ] Otimizações de performance
+- [ ] Funcionalidades experimentais
+- [ ] Tema dinâmico baseado em wallpaper
 
-## 🔧 Dependências Instaladas
+## 📊 Atualizações na Documentação
 
-### Essenciais (Confirmadas)
-- ✅ `imagemagick` - Para redimensionamento de imagens
-- ✅ `i3lock` - Para lock screen
-- ✅ `rofi` - Para menus e launchers
-- ✅ `awesome` - Window manager
+### ✅ **Documentos Atualizados:**
+- [x] `MELHORIAS_TODO.md` - Status completo da Fase 1
+- [x] `README.md` - Funcionalidades e atalhos atualizados
+- [x] `CONTEXTO_TECNICO.md` - Este arquivo (generalizado e expandido)
+- [x] `bin/backup_config` - Informações dinâmicas do usuário
 
-### Para Implementar Melhorias (Verificar)
-- `curl` - Para widgets de API
-- `jq` - Para parsing JSON
-- `dunst` - Para notificações avançadas
-- `picom` - Para transparências/blur
-- `lm-sensors` - Para temperatura do sistema
-- `acpi` - Para informações de bateria
-
-## 🐛 Problemas Resolvidos Recentemente
-
-### Lock Screen com i3lock
-- **Problema:** i3lock não exibia wallpapers, erro com opções de cor
-- **Causa:** Versão básica do i3lock sem suporte a opções avançadas
-- **Solução:** ✅ Script adaptado para i3lock básico com redimensionamento automático
-- **Data:** 27/06/2025
-
-## 📋 Checklist de Funcionalidades
-
-### ✅ Funcionando
-- [x] Configuração modular organizada
-- [x] Tags com ícones personalizados
-- [x] Auto-start inteligente de aplicações
-- [x] Lock screen com wallpaper
-- [x] Scripts de gerenciamento de energia
-- [x] Atalhos de teclado personalizados
-- [x] Integração com tmux (documentada)
-
-### 🔄 Para Melhorar
-- [ ] Widgets avançados na wibar
-- [ ] Sistema de notificações
-- [ ] Scratchpads
-- [ ] Tema visual mais moderno
-- [ ] Wallpapers dinâmicos
-- [ ] Scripts de produtividade
-
-## 💾 Comandos de Backup
-
-### Backup Completo
-```bash
-cp -r ~/.config/awesome ~/.config/awesome.backup.$(date +%Y%m%d_%H%M%S)
-```
-
-### Backup Apenas Configurações
-```bash
-tar -czf ~/awesome-config-backup-$(date +%Y%m%d_%H%M%S).tar.gz -C ~/.config awesome
-```
+### 🎯 **Próximos Passos:**
+1. **Testar** todas as implementações da Fase 1
+2. **Validar** funcionamento dos widgets e scratchpads
+3. **Confirmar** scripts de backup e monitoramento
+4. **Planejar** implementações da Fase 2
 
 ---
 
-**Última atualização:** 27/06/2025 21:00 UTC
-**Próxima revisão:** Quando implementar melhorias da lista TODO
+**Última atualização:** 30 de Junho de 2025 - 18:00 UTC
+**Status:** ✅ **FASE 1 CONCLUÍDA COM SUCESSO**
+**Próximo:** Fase 2 - Sistema de wallpapers dinâmico e centro de notificações
+**Documentação:** 100% atualizada e sincronizada

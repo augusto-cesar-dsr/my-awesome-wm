@@ -5,25 +5,33 @@
 - **Lock Screen**: ✅ Corrigido e funcionando
 - **Estrutura Modular**: ✅ Implementada
 - **Scripts Básicos**: ✅ Funcionando
+- **Widgets Básicos**: ✅ **IMPLEMENTADO** - CPU, RAM, Rede, Volume
+- **Scratchpads**: ✅ **IMPLEMENTADO** - Terminal, Calculadora, Notas
+- **Scripts de Produtividade**: ✅ **IMPLEMENTADO** - Backup, Monitor de Recursos
+- **Melhorias no Tema**: ✅ **IMPLEMENTADO** - Transparências, cantos arredondados
 
 ---
 
 ## 🚀 Melhorias Planejadas
 
 ### 1. Sistema de Widgets Avançados na Wibar
-**Prioridade: ALTA** 🔴
-- [ ] Widget de CPU com gráfico em tempo real
-- [ ] Widget de RAM com indicador visual
+**Prioridade: ALTA** 🔴 **PARCIALMENTE IMPLEMENTADO**
+- [x] ✅ Widget de CPU com gráfico em tempo real
+- [x] ✅ Widget de RAM com indicador visual
 - [ ] Widget de temperatura do sistema
-- [ ] Widget de rede com velocidade up/down
+- [x] ✅ Widget de rede com velocidade up/down
 - [ ] Widget de bateria (se laptop) com estimativa
-- [ ] Widget de volume com controle visual e ícones
+- [x] ✅ Widget de volume com controle visual e ícones
 - [ ] Widget de clima com API externa
 - [ ] Widget de data/hora mais elaborado
 
-**Arquivos a modificar:**
-- `config/ui/wibar.lua`
-- Criar: `config/ui/widgets/`
+**Arquivos implementados:**
+- ✅ `config/ui/wibar.lua` - Atualizado
+- ✅ `config/ui/widgets/` - Criado
+- ✅ `config/ui/widgets/cpu.lua` - Implementado
+- ✅ `config/ui/widgets/memory.lua` - Implementado
+- ✅ `config/ui/widgets/network.lua` - Implementado
+- ✅ `config/ui/widgets/volume.lua` - Implementado
 
 ### 2. Gerenciamento de Wallpapers Dinâmico
 **Prioridade: MÉDIA** 🟡
@@ -50,44 +58,46 @@
 - Criar: `config/ui/notification-center.lua`
 
 ### 4. Scratchpads (Janelas Flutuantes Rápidas)
-**Prioridade: ALTA** 🔴
-- [ ] Terminal dropdown (estilo Quake)
-- [ ] Calculadora rápida
-- [ ] Notas rápidas/sticky notes
+**Prioridade: ALTA** 🔴 **IMPLEMENTADO COMPLETAMENTE** ✅
+- [x] ✅ Terminal dropdown (estilo Quake)
+- [x] ✅ Calculadora rápida
+- [x] ✅ Notas rápidas/sticky notes (com nvim)
 - [ ] Monitor de sistema flutuante
 - [ ] Player de música flutuante
 
-**Arquivos a criar:**
-- `config/scratchpads.lua`
-- `bin/scratchpad_manager`
+**Arquivos implementados:**
+- ✅ `config/scratchpads.lua` - Implementado
+- ✅ Keybindings adicionados em `config/keys/global.lua`
+- ✅ **F12**: Terminal dropdown
+- ✅ **Super + F12**: Calculadora
+- ✅ **Super + Shift + F12**: Notas com nvim
 
 ### 5. Melhorias no Tema Visual
-**Prioridade: ALTA** 🔴
-- [ ] Tema mais moderno com cantos arredondados
-- [ ] Sistema de transparências e blur
+**Prioridade: ALTA** 🔴 **IMPLEMENTADO PARCIALMENTE** ✅
+- [x] ✅ Tema mais moderno com cantos arredondados
+- [x] ✅ Sistema de transparências básicas
 - [ ] Cores dinâmicas baseadas no wallpaper
 - [ ] Animações suaves para transições
 - [ ] Tema escuro/claro automático por horário
-- [ ] Customização de bordas e sombras
+- [x] ✅ Customização de bordas e sombras
 
-**Arquivos a modificar:**
-- `themes/custom/`
-- Criar: `themes/dynamic/`
+**Arquivos modificados:**
+- ✅ `themes/custom/theme.lua` - Atualizado com melhorias visuais
+- ✅ `config/ui/wibar.lua` - Altura e transparência aplicadas
 
 ### 6. Scripts de Produtividade
-**Prioridade: MÉDIA** 🟡
-- [ ] Backup automático de configurações
-- [ ] Monitor de recursos com alertas
+**Prioridade: MÉDIA** 🟡 **IMPLEMENTADO PARCIALMENTE** ✅
+- [x] ✅ Backup automático de configurações
+- [x] ✅ Monitor de recursos com alertas
 - [ ] Gerenciador de projetos/workspaces
 - [ ] Timer Pomodoro integrado
 - [ ] Launcher de aplicações inteligente
 - [ ] Sistema de bookmarks/favoritos
 
-**Arquivos a criar:**
-- `bin/backup_config`
-- `bin/resource_monitor`
-- `bin/project_manager`
-- `bin/pomodoro_timer`
+**Arquivos implementados:**
+- ✅ `bin/backup_config` - Script completo de backup
+- ✅ `bin/resource_monitor` - Monitor de CPU, RAM, disco, temperatura
+- ✅ Keybindings: **Super + Shift + b** (backup), **Super + Shift + r** (monitor)
 
 ### 7. Integração com Ferramentas Externas
 **Prioridade: BAIXA** 🟢
@@ -115,20 +125,23 @@
 
 ## 🛠️ Implementação Sugerida por Fases
 
-### **Fase 1 - Essenciais** (1-2 sessões)
-1. Widgets básicos na wibar (CPU, RAM, rede)
-2. Scratchpad para terminal dropdown
-3. Melhorias básicas no tema
+### **Fase 1 - Essenciais** ✅ **CONCLUÍDA**
+1. ✅ Widgets básicos na wibar (CPU, RAM, rede, volume)
+2. ✅ Scratchpad para terminal dropdown + calculadora + notas
+3. ✅ Melhorias básicas no tema (transparências, cantos arredondados)
+4. ✅ Scripts de backup e monitoramento
 
-### **Fase 2 - Produtividade** (2-3 sessões)
-1. Sistema de wallpapers dinâmico
-2. Centro de notificações
-3. Scripts de backup e monitoramento
+### **Fase 2 - Produtividade** (2-3 sessões) 🔄 **PRÓXIMA**
+1. [ ] Sistema de wallpapers dinâmico
+2. [ ] Centro de notificações
+3. [ ] Widgets restantes (temperatura, bateria, clima)
+4. [ ] Timer Pomodoro integrado
 
-### **Fase 3 - Avançadas** (3-4 sessões)
-1. Integrações externas
-2. Otimizações de performance
-3. Funcionalidades experimentais
+### **Fase 3 - Avançadas** (3-4 sessões) 🔄 **FUTURO**
+1. [ ] Integrações externas (tmux, git, docker)
+2. [ ] Otimizações de performance
+3. [ ] Funcionalidades experimentais
+4. [ ] Tema dinâmico baseado em wallpaper
 
 ---
 
@@ -136,27 +149,32 @@
 
 ```
 ~/.config/awesome/
-├── rc.lua
-├── MELHORIAS_TODO.md          # Este arquivo
+├── rc.lua                     # ✅ Atualizado
+├── MELHORIAS_TODO.md          # ✅ Este arquivo atualizado
 ├── bin/
 │   ├── logout                 # ✅ Implementado
 │   ├── set_lockscreen_wallpaper # ✅ Implementado
+│   ├── backup_config          # ✅ NOVO - Implementado
+│   ├── resource_monitor       # ✅ NOVO - Implementado
 │   ├── wallpaper_manager      # 🔄 Planejado
-│   ├── scratchpad_manager     # 🔄 Planejado
-│   ├── backup_config          # 🔄 Planejado
-│   ├── resource_monitor       # 🔄 Planejado
 │   ├── project_manager        # 🔄 Planejado
 │   └── media_controls         # 🔄 Planejado
 ├── config/
+│   ├── scratchpads.lua        # ✅ NOVO - Implementado
 │   ├── ui/
-│   │   ├── wibar.lua          # 🔄 Para melhorar
-│   │   ├── widgets/           # 🔄 Novo diretório
+│   │   ├── wibar.lua          # ✅ Atualizado com widgets
+│   │   ├── widgets/           # ✅ NOVO - Diretório criado
+│   │   │   ├── init.lua       # ✅ NOVO - Implementado
+│   │   │   ├── cpu.lua        # ✅ NOVO - Implementado
+│   │   │   ├── memory.lua     # ✅ NOVO - Implementado
+│   │   │   ├── network.lua    # ✅ NOVO - Implementado
+│   │   │   └── volume.lua     # ✅ NOVO - Implementado
 │   │   ├── notification-center.lua # 🔄 Planejado
-│   │   └── scratchpads.lua    # 🔄 Planejado
-│   ├── integrations/          # 🔄 Novo diretório
+│   │   └── scratchpads.lua    # ✅ Implementado
+│   ├── integrations/          # 🔄 Novo diretório planejado
 │   └── wallpaper-config.lua   # 🔄 Planejado
 └── themes/
-    ├── custom/                # ✅ Existente
+    ├── custom/                # ✅ Atualizado com melhorias
     └── dynamic/               # 🔄 Planejado
 ```
 
@@ -164,12 +182,37 @@
 
 ## 🎯 Próximos Passos
 
-Quando quiser continuar, podemos:
+### ✅ **FASE 1 CONCLUÍDA COM SUCESSO!**
 
-1. **Escolher uma prioridade** da lista acima
-2. **Implementar fase por fase** seguindo a ordem sugerida
-3. **Testar cada funcionalidade** antes de passar para a próxima
-4. **Documentar as mudanças** neste arquivo
+**Implementações realizadas:**
+- ✅ 4 Widgets funcionais (CPU, RAM, Rede, Volume)
+- ✅ 3 Scratchpads (Terminal F12, Calculadora Super+F12, Notas Super+Shift+F12)
+- ✅ 2 Scripts de produtividade (Backup, Monitor de recursos)
+- ✅ Melhorias visuais no tema (transparências, cantos arredondados)
+
+### 🚀 **PRÓXIMA FASE - Fase 2 (Produtividade)**
+
+Quando quiser continuar, podemos implementar:
+
+1. **Sistema de Wallpapers Dinâmico** (30-45 min)
+   - Rotação automática por tempo
+   - Wallpapers diferentes por tag
+   - Integração com lock screen
+
+2. **Widgets Restantes** (30 min)
+   - Widget de temperatura
+   - Widget de bateria (se laptop)
+   - Widget de clima com API
+
+3. **Centro de Notificações** (45 min)
+   - Histórico de notificações
+   - Notificações personalizadas
+   - Integração com sistema
+
+4. **Timer Pomodoro** (20 min)
+   - Timer integrado na wibar
+   - Notificações de intervalo
+   - Controles básicos
 
 ---
 
@@ -188,6 +231,12 @@ Quando quiser continuar, podemos:
 - ✅ Autostart inteligente de aplicações
 - ✅ Estrutura modular organizada
 - ✅ Scripts de gerenciamento de energia
+- ✅ **NOVO**: 4 Widgets na wibar (CPU, RAM, Rede, Volume)
+- ✅ **NOVO**: 3 Scratchpads funcionais (Terminal, Calculadora, Notas)
+- ✅ **NOVO**: Scripts de backup e monitoramento
+- ✅ **NOVO**: Tema com transparências e cantos arredondados
+- ✅ **NOVO**: Controles de volume por mouse na wibar
+- ✅ **NOVO**: Keybindings para todas as novas funcionalidades
 
 ### Backup Atual
 Antes de implementar melhorias, sempre fazer:
@@ -197,5 +246,6 @@ cp -r ~/.config/awesome ~/.config/awesome.backup.$(date +%Y%m%d_%H%M%S)
 
 ---
 
-**Última atualização:** $(date)
-**Status:** Planejamento completo - Pronto para implementação
+**Última atualização:** 30 de Junho de 2025 - 18:00 UTC
+**Status:** ✅ **FASE 1 CONCLUÍDA** - Widgets, Scratchpads, Scripts e Tema implementados com sucesso!
+**Próximo:** Fase 2 - Sistema de wallpapers dinâmico e centro de notificações

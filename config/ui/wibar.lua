@@ -7,6 +7,12 @@ local beautiful = require("beautiful")
 -- Import menu
 local menu = require("config.ui.menu")
 
+-- Import widgets
+local cpu_widget = require("config.ui.widgets.cpu")
+local memory_widget = require("config.ui.widgets.memory")
+local network_widget = require("config.ui.widgets.network")
+local volume_widget = require("config.ui.widgets.volume")
+
 -- Keyboard map indicator and switcher
 local mykeyboardlayout = awful.widget.keyboardlayout()
 
@@ -91,7 +97,8 @@ awful.screen.connect_for_each_screen(function(s)
   s.mywibox = awful.wibar({
     position = "top",
     screen = s,
-    height = 18, -- Altura mínima para mostrar os ícones
+    height = beautiful.wibar_height or 26, -- Usar altura do tema
+    bg = beautiful.wibar_bg or beautiful.bg_normal,
   })
 
   -- Add widgets to the wibox
@@ -106,6 +113,14 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist, -- Middle widget
     {           -- Right widgets
       layout = wibox.layout.fixed.horizontal,
+      cpu_widget.widget,
+      wibox.widget.textbox(" | "),
+      memory_widget.widget,
+      wibox.widget.textbox(" | "),
+      network_widget.widget,
+      wibox.widget.textbox(" | "),
+      volume_widget.widget,
+      wibox.widget.textbox(" | "),
       mykeyboardlayout,
       wibox.widget.systray(),
       mytextclock,

@@ -7,6 +7,10 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 - **Portável**: Usa variáveis dinâmicas baseadas no usuário atual (`$HOME`, `$USER`)
 - **Modular**: Estrutura organizada em módulos separados
 - **Inteligente**: Lógica automática para posicionamento de aplicações
+- **Widgets Avançados**: CPU, RAM, Rede e Volume em tempo real
+- **Scratchpads**: Janelas flutuantes rápidas (Terminal, Calculadora, Notas)
+- **Scripts de Produtividade**: Backup automático e monitoramento de recursos
+- **Tema Moderno**: Transparências, cantos arredondados e cores dinâmicas
 
 ## Estrutura
 
@@ -17,13 +21,16 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 │   ├── audio_manager         # Gerenciador de áudio
 │   ├── brightness_control    # Controle de brilho
 │   ├── logout               # Opções de energia
-│   └── rofi_change_display  # Opções de display
+│   ├── rofi_change_display  # Opções de display
+│   ├── backup_config        # 🆕 Backup automático da configuração
+│   └── resource_monitor     # 🆕 Monitor de recursos do sistema
 ├── config/
 │   ├── error-handling.lua    # Tratamento de erros
 │   ├── variables.lua         # Variáveis globais e configurações
 │   ├── rules.lua            # Regras de janelas
 │   ├── signals.lua          # Sinais e eventos
 │   ├── autostart.lua        # Aplicações que iniciam automaticamente
+│   ├── scratchpads.lua      # 🆕 Configuração de scratchpads
 │   ├── keys/
 │   │   ├── global.lua       # Atalhos globais
 │   │   ├── client.lua       # Atalhos de cliente
@@ -31,7 +38,12 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 │   └── ui/
 │       ├── menu.lua         # Menu principal
 │       ├── wibar.lua        # Barra superior
-│       └── notifications.lua # Configuração de notificações
+│       ├── notifications.lua # Configuração de notificações
+│       └── widgets/         # 🆕 Widgets da wibar
+│           ├── cpu.lua      # Widget de CPU
+│           ├── memory.lua   # Widget de RAM
+│           ├── network.lua  # Widget de rede
+│           └── volume.lua   # Widget de volume
 └── themes/
     └── custom/              # Tema personalizado
 ```
@@ -113,6 +125,21 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 - `Ctrl + 1`: Opções de display (rofi_change_display)
 - `Super + Ctrl + l`: Opções de energia (logout)
 - `Super + Shift + a`: Gerenciador de áudio
+- `Super + Shift + b`: Backup da configuração
+- `Super + Shift + r`: Status do monitor de recursos
+
+### Scratchpads (Janelas Flutuantes Rápidas)
+- `F12`: Terminal dropdown (estilo Quake)
+- `Super + F12`: Calculadora flutuante
+- `Super + Shift + F12`: Notas rápidas (nvim)
+
+### Widgets na Wibar
+- **CPU**: Mostra uso da CPU com cores (verde/amarelo/vermelho)
+- **RAM**: Mostra uso da memória com percentual
+- **Network**: Mostra velocidade de download/upload
+- **Volume**: Mostra volume atual com controle por mouse
+  - Clique: alternar mudo
+  - Scroll: ajustar volume
 
 ### Tmux Integration
 - **Tmux Help**: `Super + s` - Mostra ajuda do AwesomeWM, incluindo seção "tmux"

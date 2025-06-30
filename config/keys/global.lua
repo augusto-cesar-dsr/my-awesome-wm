@@ -3,6 +3,9 @@ local gears = require("gears")
 local awful = require("awful")
 local hotkeys_popup = require("awful.hotkeys_popup")
 
+-- Import scratchpads
+local scratchpads = require("config.scratchpads")
+
 -- Garantir que modkey está definido
 modkey = modkey or "Mod4"
 
@@ -112,6 +115,29 @@ local globalkeys = gears.table.join(
   awful.key({ modkey, "Shift" }, "a", function()
     awful.spawn("bash " .. scripts_path .. "audio_manager")
   end, { description = "audio manager", group = "my managements" }),
+
+  -- Backup configuration
+  awful.key({ modkey, "Shift" }, "b", function()
+    awful.spawn("bash " .. scripts_path .. "backup_config")
+  end, { description = "backup awesome config", group = "my managements" }),
+
+  -- Resource monitor status
+  awful.key({ modkey, "Shift" }, "r", function()
+    awful.spawn(terminal .. " -e bash " .. scripts_path .. "resource_monitor status")
+  end, { description = "show resource monitor status", group = "my managements" }),
+
+  -- Scratchpads
+  awful.key({}, "F12", function()
+    scratchpads.terminal:toggle()
+  end, { description = "toggle terminal scratchpad", group = "scratchpads" }),
+
+  awful.key({ modkey }, "F12", function()
+    scratchpads.calculator:toggle()
+  end, { description = "toggle calculator scratchpad", group = "scratchpads" }),
+
+  awful.key({ modkey, "Shift" }, "F12", function()
+    scratchpads.notes:toggle()
+  end, { description = "toggle notes scratchpad (nvim)", group = "scratchpads" }),
 
   -- Layout controls
   awful.key({ modkey }, "l", function()

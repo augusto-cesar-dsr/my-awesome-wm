@@ -1,5 +1,6 @@
 -- Autostart applications
 local awful = require("awful")
+local naughty = require("naughty")
 
 -- Função melhorada para verificar se processo já está rodando
 local function run_once(cmd, process_name)
@@ -27,15 +28,25 @@ end
 
 -- Função específica para verificar Chrome rodando
 local function chrome_is_running()
-  -- Verifica tanto por janela quanto por processo
+  -- Verifica apenas por janela (não por processo em background)
   local has_window = app_has_window({"google-chrome", "Google-chrome", "chromium", "Chromium"})
-  if has_window then return true end
+  if has_window then 
+    naughty.notify({title = "Chrome Debug", text = "Chrome window found"})
+    return true 
+  end
   
-  -- Verifica processo chrome
-  local handle = io.popen("pgrep -u $USER -f 'chrome|google-chrome' 2>/dev/null")
+  -- Verifica processo chrome principal (não crash handlers)
+  local handle = io.popen("pgrep -u $USER -f 'google-chrome.*--type=browser' 2>/dev/null")
   local result = handle:read("*a")
   handle:close()
-  return result and result:match("%d+")
+  
+  if result and result:match("%d+") then
+    naughty.notify({title = "Chrome Debug", text = "Chrome browser process found"})
+    return true
+  end
+  
+  naughty.notify({title = "Chrome Debug", text = "No Chrome found - will start"})
+  return false
 end
 
 -- Aplicações que iniciam automaticamente
@@ -62,7 +73,7 @@ local autostart_apps = {
   {
     cmd = "google-chrome-stable --profile-directory='Profile 1'",
     tag = "󰖟",
-    delay = 6,
+    delay = 8,
     check_classes = {"google-chrome", "Google-chrome", "chromium", "Chromium"},
     process_name = "chrome", -- Processo mais genérico para detecção
   },
@@ -123,6 +134,13 @@ for _, app in ipairs(autostart_apps) do
 end
 
 -- Outras aplicações de sistema (sem delay) - apenas se não estiverem rodando
-run_once("nm-applet")      -- Network manager
-run_once("blueman-applet") -- Bluetooth  
-run_once("pasystray")      -- Audio control
+run_once("nm-applet", "nm-applet")      -- Network manager
+run_once("blueman-applet", "blueman-applet") -- Bluetooth  
+run_once("pasystray", "pasystray")      -- Audio control
+
+-- Aguardar um pouco antes de iniciar os applets para garantir que o systray esteja pronto
+awful.spawn.easy_async_with_shell("sleep 3", function()
+  run_once("nm-applet", "nm-applet")
+  run_once("blueman-applet", "blueman-applet") 
+  run_once("pasystray", "pasystray")
+end)
