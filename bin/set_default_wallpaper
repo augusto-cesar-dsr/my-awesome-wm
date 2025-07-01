@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Set Samurai Yellow Moon as default wallpaper
+# This script ensures the samurai yellow wallpaper is always the default
+
+SAMURAI_WALLPAPER="/home/augusto/.config/awesome/themes/custom/samurai-yellow-moon.jpg"
+CURRENT_WALLPAPER_FILE="/home/augusto/.config/awesome/.current_wallpaper"
+
+# Check if samurai wallpaper exists
+if [ ! -f "$SAMURAI_WALLPAPER" ]; then
+    echo "❌ Samurai wallpaper not found: $SAMURAI_WALLPAPER"
+    exit 1
+fi
+
+# Set wallpaper using feh
+feh --bg-scale "$SAMURAI_WALLPAPER"
+
+# Update current wallpaper file
+echo "$SAMURAI_WALLPAPER" > "$CURRENT_WALLPAPER_FILE"
+
+# Generate theme from this wallpaper
+cd /home/augusto/.config/awesome
+./bin/theme_manager generate
+
+echo "✅ Samurai Yellow Moon wallpaper set as default!"
+echo "🎨 Theme regenerated based on samurai colors"
+echo "🔄 Restart AwesomeWM to see changes: Super + Ctrl + r"

@@ -1,0 +1,380 @@
+#!/bin/bash
+
+# Picom Manager for AwesomeWM Dynamic Theme
+# Manages compositor effects integrated with theme changes
+
+# Configuration
+PICOM_CONFIG="$HOME/.config/picom/picom.conf"
+PICOM_PID_FILE="$HOME/.config/picom/picom.pid"
+THEME_CACHE_FILE="$HOME/.config/awesome/.theme_cache"
+LOG_FILE="$HOME/.config/awesome/picom_manager.log"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m' # No Color
+
+# Logging function
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_FILE"
+}
+
+# Print colored output
+print_status() {
+    echo -e "${GREEN}[PICOM]${NC} $1"
+    log "INFO: $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[PICOM]${NC} $1"
+    log "WARN: $1"
+}
+
+print_error() {
+    echo -e "${RED}[PICOM]${NC} $1"
+    log "ERROR: $1"
+}
+
+print_theme() {
+    echo -e "${PURPLE}[PICOM]${NC} $1"
+    log "THEME: $1"
+}
+
+# Check if picom is running
+is_picom_running() {
+    pgrep -x picom > /dev/null
+}
+
+# Start picom
+start_picom() {
+    if is_picom_running; then
+        print_warning "Picom is already running"
+        return 0
+    fi
+    
+    if [ ! -f "$PICOM_CONFIG" ]; then
+        print_error "Picom config not found: $PICOM_CONFIG"
+        return 1
+    fi
+    
+    print_status "Starting Picom compositor..."
+    
+    # Start picom with config file
+    picom --config "$PICOM_CONFIG" --daemon --write-pid-path "$PICOM_PID_FILE" 2>/dev/null
+    
+    if [ $? -eq 0 ]; then
+        sleep 1
+        if is_picom_running; then
+            print_status "Picom started successfully"
+            return 0
+        else
+            print_error "Picom failed to start"
+            return 1
+        fi
+    else
+        print_error "Failed to start Picom"
+        return 1
+    fi
+}
+
+# Stop picom
+stop_picom() {
+    if ! is_picom_running; then
+        print_warning "Picom is not running"
+        return 0
+    fi
+    
+    print_status "Stopping Picom compositor..."
+    
+    # Try to stop gracefully using PID file
+    if [ -f "$PICOM_PID_FILE" ]; then
+        local pid=$(cat "$PICOM_PID_FILE")
+        if [ -n "$pid" ]; then
+            kill "$pid" 2>/dev/null
+            sleep 1
+        fi
+        rm -f "$PICOM_PID_FILE"
+    fi
+    
+    # Force kill if still running
+    if is_picom_running; then
+        pkill -x picom
+        sleep 1
+    fi
+    
+    if ! is_picom_running; then
+        print_status "Picom stopped successfully"
+        return 0
+    else
+        print_error "Failed to stop Picom"
+        return 1
+    fi
+}
+
+# Restart picom
+restart_picom() {
+    print_status "Restarting Picom compositor..."
+    stop_picom
+    sleep 1
+    start_picom
+}
+
+# Toggle picom
+toggle_picom() {
+    if is_picom_running; then
+        stop_picom
+    else
+        start_picom
+    fi
+}
+
+# Update picom config based on current theme
+update_theme_integration() {
+    if [ ! -f "$THEME_CACHE_FILE" ]; then
+        print_warning "No theme cache found, using default settings"
+        return 0
+    fi
+    
+    source "$THEME_CACHE_FILE"
+    
+    # Get current time to determine day/night
+    local hour=$(date +%H)
+    local is_day=false
+    
+    if [ "$hour" -ge 6 ] && [ "$hour" -lt 18 ]; then
+        is_day=true
+    fi
+    
+    print_theme "Updating Picom for $([ "$is_day" = "true" ] && echo "day" || echo "night") theme"
+    
+    # Create temporary config with theme-specific adjustments
+    local temp_config="/tmp/picom_theme.conf"
+    cp "$PICOM_CONFIG" "$temp_config"
+    
+    if [ "$is_day" = "true" ]; then
+        # Day theme adjustments - lighter effects
+        sed -i 's/shadow-opacity = 0.75;/shadow-opacity = 0.6;/' "$temp_config"
+        sed -i 's/inactive-opacity = 0.95;/inactive-opacity = 0.98;/' "$temp_config"
+        sed -i 's/blur-strength = 5;/blur-strength = 3;/' "$temp_config"
+    else
+        # Night theme adjustments - stronger effects
+        sed -i 's/shadow-opacity = 0.6;/shadow-opacity = 0.75;/' "$temp_config"
+        sed -i 's/inactive-opacity = 0.98;/inactive-opacity = 0.95;/' "$temp_config"
+        sed -i 's/blur-strength = 3;/blur-strength = 5;/' "$temp_config"
+    fi
+    
+    # Apply the updated config
+    cp "$temp_config" "$PICOM_CONFIG"
+    rm -f "$temp_config"
+    
+    # Restart picom if running to apply changes
+    if is_picom_running; then
+        restart_picom
+    fi
+    
+    print_theme "Picom theme integration updated"
+}
+
+# Show picom status
+show_status() {
+    echo -e "${BLUE}Picom Compositor Status:${NC}"
+    
+    if is_picom_running; then
+        local pid=$(pgrep -x picom)
+        echo "  Status: Running (PID: $pid)"
+        
+        # Show memory usage
+        local mem_usage=$(ps -p "$pid" -o rss= 2>/dev/null | awk '{print $1/1024}')
+        if [ -n "$mem_usage" ]; then
+            printf "  Memory: %.1f MB\n" "$mem_usage"
+        fi
+        
+        # Show config file
+        echo "  Config: $PICOM_CONFIG"
+        
+        # Show theme integration status
+        if [ -f "$THEME_CACHE_FILE" ]; then
+            echo "  Theme Integration: Active"
+        else
+            echo "  Theme Integration: Inactive"
+        fi
+    else
+        echo "  Status: Not running"
+    fi
+    
+    echo "  Config File: $([ -f "$PICOM_CONFIG" ] && echo "Found" || echo "Missing")"
+}
+
+# Enable/disable specific effects
+toggle_effect() {
+    local effect="$1"
+    
+    if [ ! -f "$PICOM_CONFIG" ]; then
+        print_error "Picom config not found"
+        return 1
+    fi
+    
+    case "$effect" in
+        "shadows")
+            if grep -q "shadow = true;" "$PICOM_CONFIG"; then
+                sed -i 's/shadow = true;/shadow = false;/' "$PICOM_CONFIG"
+                print_status "Shadows disabled"
+            else
+                sed -i 's/shadow = false;/shadow = true;/' "$PICOM_CONFIG"
+                print_status "Shadows enabled"
+            fi
+            ;;
+        "blur")
+            if grep -q "blur-background = true;" "$PICOM_CONFIG"; then
+                sed -i 's/blur-background = true;/blur-background = false;/' "$PICOM_CONFIG"
+                print_status "Blur disabled"
+            else
+                sed -i 's/blur-background = false;/blur-background = true;/' "$PICOM_CONFIG"
+                print_status "Blur enabled"
+            fi
+            ;;
+        "fading")
+            if grep -q "fading = true;" "$PICOM_CONFIG"; then
+                sed -i 's/fading = true;/fading = false;/' "$PICOM_CONFIG"
+                print_status "Fading disabled"
+            else
+                sed -i 's/fading = false;/fading = true;/' "$PICOM_CONFIG"
+                print_status "Fading enabled"
+            fi
+            ;;
+        "animations")
+            if grep -q "animations = true;" "$PICOM_CONFIG"; then
+                sed -i 's/animations = true;/animations = false;/' "$PICOM_CONFIG"
+                print_status "Animations disabled"
+            else
+                sed -i 's/animations = false;/animations = true;/' "$PICOM_CONFIG"
+                print_status "Animations enabled"
+            fi
+            ;;
+        *)
+            print_error "Unknown effect: $effect"
+            print_status "Available effects: shadows, blur, fading, animations"
+            return 1
+            ;;
+    esac
+    
+    # Restart picom if running
+    if is_picom_running; then
+        restart_picom
+    fi
+}
+
+# Performance mode toggle
+toggle_performance_mode() {
+    if [ ! -f "$PICOM_CONFIG" ]; then
+        print_error "Picom config not found"
+        return 1
+    fi
+    
+    # Check if in performance mode (effects disabled)
+    if grep -q "blur-background = false;" "$PICOM_CONFIG" && grep -q "shadow = false;" "$PICOM_CONFIG"; then
+        # Enable effects (visual mode)
+        sed -i 's/blur-background = false;/blur-background = true;/' "$PICOM_CONFIG"
+        sed -i 's/shadow = false;/shadow = true;/' "$PICOM_CONFIG"
+        sed -i 's/fading = false;/fading = true;/' "$PICOM_CONFIG"
+        print_status "Visual mode enabled (effects on)"
+    else
+        # Disable effects (performance mode)
+        sed -i 's/blur-background = true;/blur-background = false;/' "$PICOM_CONFIG"
+        sed -i 's/shadow = true;/shadow = false;/' "$PICOM_CONFIG"
+        sed -i 's/fading = true;/fading = false;/' "$PICOM_CONFIG"
+        print_status "Performance mode enabled (effects off)"
+    fi
+    
+    # Restart picom if running
+    if is_picom_running; then
+        restart_picom
+    fi
+}
+
+# Show help
+show_help() {
+    echo -e "${BLUE}Picom Manager for AwesomeWM Dynamic Theme${NC}"
+    echo
+    echo "Usage: $0 [COMMAND] [OPTIONS]"
+    echo
+    echo "Commands:"
+    echo "  start                    Start Picom compositor"
+    echo "  stop                     Stop Picom compositor"
+    echo "  restart                  Restart Picom compositor"
+    echo "  toggle                   Toggle Picom on/off"
+    echo "  status                   Show Picom status"
+    echo "  update-theme             Update theme integration"
+    echo "  toggle-effect [EFFECT]   Toggle specific effect"
+    echo "  performance              Toggle performance mode"
+    echo "  help                     Show this help"
+    echo
+    echo "Effects:"
+    echo "  shadows                  Window shadows"
+    echo "  blur                     Background blur"
+    echo "  fading                   Window fading"
+    echo "  animations               Window animations"
+    echo
+    echo "Examples:"
+    echo "  $0 start"
+    echo "  $0 toggle-effect blur"
+    echo "  $0 performance"
+    echo
+    echo "Integration:"
+    echo "  - Automatically adjusts effects based on day/night theme"
+    echo "  - Integrates with AwesomeWM dynamic theme system"
+    echo "  - Optimized for performance and visual quality"
+}
+
+# Main function
+main() {
+    # Create log file if it doesn't exist
+    touch "$LOG_FILE"
+    
+    case "${1:-start}" in
+        "start")
+            start_picom
+            ;;
+        "stop")
+            stop_picom
+            ;;
+        "restart")
+            restart_picom
+            ;;
+        "toggle")
+            toggle_picom
+            ;;
+        "status")
+            show_status
+            ;;
+        "update-theme")
+            update_theme_integration
+            ;;
+        "toggle-effect")
+            if [ -z "$2" ]; then
+                print_error "Effect name required"
+                echo "Available effects: shadows, blur, fading, animations"
+                exit 1
+            fi
+            toggle_effect "$2"
+            ;;
+        "performance")
+            toggle_performance_mode
+            ;;
+        "help"|"--help"|"-h")
+            show_help
+            ;;
+        *)
+            print_error "Unknown command: $1"
+            echo
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"

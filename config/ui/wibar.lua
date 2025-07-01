@@ -9,6 +9,7 @@ local menu = require("config.ui.menu")
 
 -- Import widgets
 local widgets = require("config.ui.widgets")
+local notification_center = require("config.ui.notification-center")
 
 -- Keyboard map indicator and switcher
 local mykeyboardlayout = awful.widget.keyboardlayout()
@@ -121,6 +122,16 @@ awful.screen.connect_for_each_screen(function(s)
       widgets.battery.widget,
       wibox.widget.textbox(" | "),
       widgets.volume.widget,
+      wibox.widget.textbox(" | "),
+      widgets.pomodoro.widget,
+      wibox.widget.textbox(" | "),
+      widgets.weather.widget,
+      wibox.widget.textbox(" | "),
+      widgets.theme_indicator.widget,
+      wibox.widget.textbox(" | "),
+      widgets.picom_control.widget,
+      wibox.widget.textbox(" | "),
+      notification_center.widget,
       wibox.widget.textbox(" | "),
       mykeyboardlayout,
       wibox.widget.systray(),

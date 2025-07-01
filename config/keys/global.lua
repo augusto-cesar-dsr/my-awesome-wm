@@ -126,16 +126,16 @@ local globalkeys = gears.table.join(
     awful.spawn(terminal .. " -e bash " .. scripts_path .. "resource_monitor status")
   end, { description = "show resource monitor status", group = "my managements" }),
 
-  -- Scratchpads
-  awful.key({}, "F12", function()
+  -- Scratchpads (moved from F12 to Alt + numbers for better accessibility)
+  awful.key({ "Mod1" }, "1", function()
     scratchpads.terminal:toggle()
   end, { description = "toggle terminal scratchpad", group = "scratchpads" }),
 
-  awful.key({ modkey }, "F12", function()
+  awful.key({ "Mod1" }, "2", function()
     scratchpads.calculator:toggle()
   end, { description = "toggle calculator scratchpad", group = "scratchpads" }),
 
-  awful.key({ modkey, "Shift" }, "F12", function()
+  awful.key({ "Mod1" }, "3", function()
     scratchpads.notes:toggle()
   end, { description = "toggle notes scratchpad (nvim)", group = "scratchpads" }),
 
@@ -187,11 +187,19 @@ local globalkeys = gears.table.join(
     })
   end, { description = "lua execute prompt", group = "awesome" }),
 
-  -- Menubar
+  -- Menubar (restaurado)
   awful.key({ modkey }, "p", function()
     local menubar = require("menubar")
     menubar.show()
-  end, { description = "show the menubar", group = "launcher" })
+  end, { description = "show the menubar", group = "launcher" }),
+
+  -- Menu principal (restaurado)
+  awful.key({ modkey }, "w", function()
+    local menu = require("config.ui.menu")
+    if menu.mainmenu then
+      menu.mainmenu:show()
+    end
+  end, { description = "show main menu", group = "awesome" })
 )
 
 -- Bind all key numbers to tags
@@ -234,6 +242,67 @@ for i = 1, 9 do
     end, { description = "toggle focused client on tag #" .. i, group = "tag" })
   )
 end
+
+-- Pomodoro controls (moved to accessible keys)
+local pomodoro = require("config.ui.widgets.pomodoro")
+local weather = require("config.ui.widgets.weather")
+local notification_center = require("config.ui.notification-center")
+local dynamic_theme = require("config.dynamic-theme")
+local picom_control = require("config.ui.widgets.picom-control")
+
+globalkeys = gears.table.join(globalkeys,
+    -- Pomodoro Timer (using Alt + P combinations)
+    awful.key({ "Mod1" }, "p", function() pomodoro.toggle() end,
+              {description = "toggle pomodoro timer", group = "pomodoro"}),
+    awful.key({ "Mod1", "Shift" }, "p", function() pomodoro.status() end,
+              {description = "show pomodoro status", group = "pomodoro"}),
+    awful.key({ "Mod1", "Control" }, "p", function() pomodoro.skip() end,
+              {description = "skip current pomodoro phase", group = "pomodoro"}),
+    awful.key({ "Mod1", "Control", "Shift" }, "p", function() pomodoro.stop() end,
+              {description = "stop/reset pomodoro timer", group = "pomodoro"}),
+    
+    -- Weather controls (using Alt + W)
+    awful.key({ "Mod1" }, "w", function() weather.show_details() end,
+              {description = "show weather details", group = "weather"}),
+    awful.key({ "Mod1", "Shift" }, "w", function() weather.refresh() end,
+              {description = "refresh weather data", group = "weather"}),
+    
+    -- Wallpaper controls (keeping Super+Ctrl+w as it doesn't conflict)
+    awful.key({ modkey, "Control" }, "w", function() 
+        awful.spawn.with_shell(os.getenv("HOME") .. "/.config/awesome/bin/wallpaper_manager random")
+    end, {description = "set random wallpaper", group = "wallpaper"}),
+    awful.key({ modkey, "Control", "Shift" }, "w", function() 
+        awful.spawn.with_shell("rofi -dmenu -p 'Wallpaper pattern:' | xargs -I {} " .. 
+                              os.getenv("HOME") .. "/.config/awesome/bin/wallpaper_manager set '{}'")
+    end, {description = "set wallpaper by pattern", group = "wallpaper"}),
+    
+    -- Default wallpaper (Samurai Yellow Moon)
+    awful.key({ modkey, "Mod1" }, "w", function()
+        awful.spawn.with_shell(os.getenv("HOME") .. "/.config/awesome/bin/set_default_wallpaper")
+    end, {description = "restore default wallpaper (samurai yellow)", group = "wallpaper"}),
+    
+    -- Notification Center (using Alt + N)
+    awful.key({ "Mod1" }, "n", function() notification_center.toggle() end,
+              {description = "toggle notification center", group = "notifications"}),
+    awful.key({ "Mod1", "Shift" }, "n", function() notification_center.clear_all() end,
+              {description = "clear all notifications", group = "notifications"}),
+    
+    -- Dynamic Theme controls (using Alt + T)
+    awful.key({ "Mod1" }, "t", function() dynamic_theme.toggle() end,
+              {description = "toggle dynamic theming", group = "theme"}),
+    awful.key({ "Mod1", "Shift" }, "t", function() dynamic_theme.regenerate() end,
+              {description = "regenerate theme from wallpaper", group = "theme"}),
+    awful.key({ "Mod1", "Control" }, "t", function() dynamic_theme.show_info() end,
+              {description = "show dynamic theme info", group = "theme"}),
+    
+    -- Picom Compositor controls (using Alt + C)
+    awful.key({ "Mod1" }, "c", function() picom_control.toggle() end,
+              {description = "toggle picom compositor", group = "compositor"}),
+    awful.key({ "Mod1", "Shift" }, "c", function() picom_control.toggle_performance() end,
+              {description = "toggle picom performance mode", group = "compositor"}),
+    awful.key({ "Mod1", "Control" }, "c", function() picom_control.show_status() end,
+              {description = "show picom status", group = "compositor"})
+)
 
 -- Set global keys
 root.keys(globalkeys)

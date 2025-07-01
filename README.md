@@ -2,6 +2,23 @@
 
 Configuração modular e organizada do AwesomeWM com foco em produtividade e portabilidade.
 
+## 🚀 Instalação Rápida
+
+### **Script Automático (Recomendado):**
+```bash
+# Verificar dependências
+./check-deps.sh
+
+# Instalação completa
+./install.sh
+
+# Demo das funcionalidades
+./demo.sh
+```
+
+### **Instalação Manual:**
+Consulte `INSTALACAO.md` para instruções detalhadas.
+
 ## Características
 
 - **Portável**: Usa variáveis dinâmicas baseadas no usuário atual (`$HOME`, `$USER`)
@@ -17,6 +34,9 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 ```
 ~/.config/awesome/
 ├── rc.lua                    # Arquivo principal
+├── install.sh                # 🆕 Script de instalação automática
+├── check-deps.sh             # 🆕 Verificador de dependências
+├── demo.sh                   # 🆕 Demonstração das funcionalidades
 ├── bin/                      # Scripts executáveis
 │   ├── audio_manager         # Gerenciador de áudio
 │   ├── brightness_control    # Controle de brilho
@@ -128,10 +148,38 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 - `Super + Shift + b`: Backup da configuração
 - `Super + Shift + r`: Status do monitor de recursos
 
+### Produtividade (Fase 2) 🆕
+#### Pomodoro Timer
+- `Alt + p`: Start/Pause timer
+- `Alt + Shift + p`: Mostrar status
+- `Alt + Ctrl + p`: Pular fase atual
+- `Alt + Ctrl + Shift + p`: Parar/resetar timer
+
+#### Weather & Wallpaper
+- `Alt + w`: Mostrar detalhes do clima
+- `Alt + Shift + w`: Atualizar dados do clima
+- `Super + Ctrl + w`: Wallpaper aleatório
+- `Super + Ctrl + Shift + w`: Escolher wallpaper por padrão
+- `Super + Alt + w`: Restaurar wallpaper padrão (Samurai Yellow) 🆕
+
+#### Centro de Notificações
+- `Alt + n`: Abrir/fechar centro de notificações
+- `Alt + Shift + n`: Limpar todas as notificações
+
+#### Tema Dinâmico 🆕
+- `Alt + t`: Toggle tema dinâmico on/off
+- `Alt + Shift + t`: Regenerar tema do wallpaper atual
+- `Alt + Ctrl + t`: Mostrar informações do tema
+
+#### Compositor (Picom) 🆕
+- `Alt + c`: Toggle compositor on/off
+- `Alt + Shift + c`: Modo performance (efeitos on/off)
+- `Alt + Ctrl + c`: Status do compositor
+
 ### Scratchpads (Janelas Flutuantes Rápidas)
-- `F12`: Terminal dropdown (estilo Quake)
-- `Super + F12`: Calculadora flutuante
-- `Super + Shift + F12`: Notas rápidas (nvim)
+- `Alt + 1`: Terminal dropdown (estilo Quake)
+- `Alt + 2`: Calculadora flutuante
+- `Alt + 3`: Notas rápidas (nvim)
 
 ### Widgets na Wibar
 - **CPU**: Mostra uso da CPU com cores (verde/amarelo/vermelho)
@@ -140,6 +188,24 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 - **Volume**: Mostra volume atual com controle por mouse
   - Clique: alternar mudo
   - Scroll: ajustar volume
+- **🍅 Pomodoro**: Timer de produtividade (25min trabalho / 5min pausa)
+  - Clique esquerdo: Start/Pause
+  - Clique direito: Stop/Reset
+  - Clique do meio: Status
+- **🌤️ Weather**: Informações meteorológicas
+  - Clique esquerdo: Atualizar
+  - Clique direito: Detalhes
+- **🔔 Notifications**: Centro de notificações
+  - Clique: Abrir/fechar centro
+  - Contador de notificações não lidas
+- **🎨 Theme**: Indicador de tema dinâmico
+  - Clique esquerdo: Toggle on/off
+  - Clique do meio: Regenerar tema
+  - Clique direito: Informações do tema
+- **🎭 Picom**: Controle do compositor
+  - Clique esquerdo: Toggle on/off
+  - Clique do meio: Modo performance
+  - Clique direito: Menu de efeitos
 
 ## Aplicações Auto-inicializadas
 

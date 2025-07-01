@@ -138,6 +138,12 @@ run_once("nm-applet", "nm-applet")      -- Network manager
 run_once("blueman-applet", "blueman-applet") -- Bluetooth  
 run_once("pasystray", "pasystray")      -- Audio control
 
+-- Set default wallpaper (Samurai Yellow Moon)
+awful.spawn.with_shell("sleep 1 && " .. os.getenv("HOME") .. "/.config/awesome/bin/set_default_wallpaper")
+
+-- Start Picom compositor with theme integration
+awful.spawn.with_shell("sleep 2 && " .. os.getenv("HOME") .. "/.config/awesome/bin/picom_manager start")
+
 -- Aguardar um pouco antes de iniciar os applets para garantir que o systray esteja pronto
 awful.spawn.easy_async_with_shell("sleep 3", function()
   run_once("nm-applet", "nm-applet")
