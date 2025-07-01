@@ -9,7 +9,7 @@ Configuração modular e organizada do AwesomeWM com foco em produtividade e por
 # Verificar dependências
 ./check-deps.sh
 
-# Instalação completa
+# Instalação completa (inclui configuração automática do Picom)
 ./install.sh
 
 # Demo das funcionalidades
@@ -23,6 +23,7 @@ Consulte `INSTALACAO.md` para instruções detalhadas.
 
 - **Portável**: Usa variáveis dinâmicas baseadas no usuário atual (`$HOME`, `$USER`)
 - **Modular**: Estrutura organizada em módulos separados
+- **Auto-configuração**: Picom configurado automaticamente durante a instalação
 - **Inteligente**: Lógica automática para posicionamento de aplicações
 - **Widgets Avançados**: CPU, RAM, Rede e Volume em tempo real
 - **Scratchpads**: Janelas flutuantes rápidas (Terminal, Calculadora, Notas)

@@ -209,12 +209,152 @@ install_dev_tools() {
     fi
 }
 
+# Create Picom configuration file
+create_picom_config() {
+    local picom_config_dir="$HOME/.config/picom"
+    local picom_config_file="$picom_config_dir/picom.conf"
+    
+    print_step "Creating Picom configuration at $picom_config_file"
+    
+    # Ensure directory exists
+    mkdir -p "$picom_config_dir"
+    
+    # Create picom.conf
+    cat > "$picom_config_file" << 'EOF'
+# Picom Configuration for AwesomeWM
+# Optimized for dynamic theme integration and visual effects
+
+# Backend
+backend = "glx";
+glx-no-stencil = true;
+glx-copy-from-front = false;
+glx-no-rebind-pixmap = true;
+
+# Shadows
+shadow = true;
+shadow-radius = 12;
+shadow-offset-x = -15;
+shadow-offset-y = -15;
+shadow-opacity = 0.75;
+
+# Exclude shadows for some windows
+shadow-exclude = [
+    "name = 'Notification'",
+    "class_g = 'Conky'",
+    "class_g ?= 'Notify-osd'",
+    "class_g = 'Cairo-clock'",
+    "class_g = 'awesome'",
+    "_GTK_FRAME_EXTENTS@:c",
+    "_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
+];
+
+# Opacity
+inactive-opacity = 0.9;
+active-opacity = 1.0;
+frame-opacity = 1.0;
+inactive-opacity-override = false;
+
+# Opacity rules - optimized for AwesomeWM
+opacity-rule = [
+    "100:class_g = 'firefox'",
+    "100:class_g = 'Firefox'",
+    "100:class_g = 'Google-chrome'",
+    "100:class_g = 'google-chrome'",
+    "95:class_g = 'Gnome-terminal'",
+    "95:class_g = 'gnome-terminal-server'",
+    "90:class_g = 'Rofi'",
+    "95:class_g = 'Code'",
+    "95:class_g = 'code'",
+    "90:class_g = 'Slack'",
+    "95:class_g = 'Nautilus'",
+    "100:class_g = 'awesome'"
+];
+
+# Blur
+blur-background = true;
+blur-background-frame = true;
+blur-method = "dual_kawase";
+blur-strength = 5;
+
+# Blur exclude
+blur-background-exclude = [
+    "window_type = 'dock'",
+    "window_type = 'desktop'",
+    "class_g = 'awesome'",
+    "_GTK_FRAME_EXTENTS@:c"
+];
+
+# Fading
+fading = true;
+fade-delta = 4;
+fade-in-step = 0.03;
+fade-out-step = 0.03;
+
+# Exclude fading for some windows
+fade-exclude = [
+    "class_g = 'awesome'"
+];
+
+# Rounded corners
+corner-radius = 8;
+rounded-corners-exclude = [
+    "window_type = 'dock'",
+    "window_type = 'desktop'",
+    "class_g = 'awesome'"
+];
+
+# Window type settings
+wintypes: {
+    tooltip = { fade = true; shadow = true; opacity = 0.85; focus = true; full-shadow = false; };
+    dock = { shadow = false; clip-shadow-above = true; };
+    dnd = { shadow = false; };
+    popup_menu = { opacity = 0.95; };
+    dropdown_menu = { opacity = 0.95; };
+    above = { shadow = true; };
+    splash = { shadow = false; };
+    utility = { focus = true; shadow = false; blur-background = false; };
+    notification = { shadow = false; };
+    desktop = { shadow = false; blur-background = false; };
+    menu = { focus = false; };
+    dialog = { shadow = true; };
+};
+
+# Performance optimizations
+vsync = true;
+mark-wmwin-focused = true;
+mark-ovredir-focused = true;
+detect-rounded-corners = true;
+detect-client-opacity = true;
+refresh-rate = 0;
+detect-transient = true;
+detect-client-leader = true;
+use-damage = true;
+
+# Experimental features (comment out if causing issues)
+experimental-backends = true;
+EOF
+
+    if [[ -f "$picom_config_file" ]]; then
+        print_success "Picom configuration created successfully"
+        log "SUCCESS: Picom config created at $picom_config_file"
+    else
+        print_error "Failed to create Picom configuration"
+        log "ERROR: Failed to create Picom config"
+        exit 1
+    fi
+}
+
 # Install Picom compositor
 install_picom() {
     print_step "Installing Picom compositor..."
     
     if sudo apt install -y picom; then
         print_success "Picom compositor installed"
+        
+        # Create Picom configuration
+        print_step "Creating Picom configuration..."
+        create_picom_config
+        
     else
         print_error "Failed to install Picom"
         exit 1
@@ -516,6 +656,32 @@ check_installation() {
     fi
 }
 
+# Initialize Picom after installation
+initialize_picom() {
+    print_step "Initializing Picom compositor..."
+    
+    # Check if we're in a graphical session
+    if [[ -n "$DISPLAY" ]] && command -v picom >/dev/null 2>&1; then
+        # Try to start Picom using the manager script
+        if [[ -x "$AWESOME_CONFIG_DIR/bin/picom_manager" ]]; then
+            if "$AWESOME_CONFIG_DIR/bin/picom_manager" start >/dev/null 2>&1; then
+                print_success "Picom compositor started successfully"
+                log "SUCCESS: Picom initialized"
+            else
+                print_warning "Picom installation complete, but couldn't start automatically"
+                print_info "You can start it manually with: Alt + c (after logging into AwesomeWM)"
+                log "WARNING: Picom auto-start failed"
+            fi
+        else
+            print_warning "Picom manager script not found, skipping auto-start"
+            log "WARNING: Picom manager not found"
+        fi
+    else
+        print_info "Picom will start automatically when you log into AwesomeWM"
+        log "INFO: Picom setup complete, will start with AwesomeWM"
+    fi
+}
+
 # Show post-installation instructions
 show_post_install() {
     echo
@@ -533,12 +699,18 @@ show_post_install() {
     
     print_info "Key features available:"
     echo -e "  ${PURPLE}•${NC} Dynamic theme based on wallpaper"
-    echo -e "  ${PURPLE}•${NC} Picom compositor with visual effects"
+    echo -e "  ${PURPLE}•${NC} Picom compositor with visual effects (auto-configured)"
     echo -e "  ${PURPLE}•${NC} 10 functional widgets in the status bar"
     echo -e "  ${PURPLE}•${NC} Scratchpads for quick access (Alt + 1/2/3)"
     echo -e "  ${PURPLE}•${NC} Pomodoro timer (Alt + p)"
     echo -e "  ${PURPLE}•${NC} Weather widget (Alt + w)"
     echo -e "  ${PURPLE}•${NC} Notification center (Alt + n)"
+    echo
+    
+    print_info "Configuration files created:"
+    echo -e "  ${PURPLE}•${NC} AwesomeWM config: ${YELLOW}~/.config/awesome/${NC}"
+    echo -e "  ${PURPLE}•${NC} Picom config: ${YELLOW}~/.config/picom/picom.conf${NC}"
+    echo -e "  ${PURPLE}•${NC} Theme system: ${YELLOW}~/.config/awesome/themes/${NC}"
     echo
     
     if [ -d "$BACKUP_DIR" ]; then
@@ -587,6 +759,9 @@ main() {
     setup_services
     configure_lightdm
     final_configuration
+    
+    # Initialize services
+    initialize_picom
     
     # Verification
     if check_installation; then
