@@ -1,7 +1,7 @@
 -- Dynamic Theme for AwesomeWM
 -- Generated automatically from wallpaper colors
--- Theme: night
--- Generated: ter 01 jul 2025 01:09:57 -03
+-- Theme: day
+-- Generated: ter 01 jul 2025 07:26:33 -03
 
 local theme_assets = require("beautiful.theme_assets")
 local xresources = require("beautiful.xresources")
@@ -17,14 +17,14 @@ theme.secondary_color = "#feca57"
 theme.accent_color = "#ff6b6b"
 
 -- Base colors
-theme.bg_normal = "#1a1a1a"
-theme.bg_focus = "#2d2d2d"
+theme.bg_normal = "#f8f9fa"
+theme.bg_focus = "#e9ecef"
 theme.bg_urgent = theme.accent_color
 theme.bg_minimize = "#444444"
 theme.bg_systray = theme.bg_normal
 
-theme.fg_normal = "#ffffff"
-theme.fg_focus = "#ffffff"
+theme.fg_normal = "#212529"
+theme.fg_focus = "#000000"
 theme.fg_urgent = "#ffffff"
 theme.fg_minimize = "#ffffff"
 
