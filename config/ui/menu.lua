@@ -2,6 +2,7 @@
 local awful = require("awful")
 local beautiful = require("beautiful")
 local hotkeys_popup = require("awful.hotkeys_popup")
+local wibox = require("wibox")
 
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
@@ -37,6 +38,19 @@ local mymainmenu = awful.menu({
   },
 })
 
+-- Create skull launcher as textbox widget
+local skull_textbox = wibox.widget {
+  markup = '<span font="16">💀</span>',
+  align = "center",
+  valign = "center",
+  widget = wibox.widget.textbox,
+}
+
+-- Make it clickable
+skull_textbox:buttons(awful.button({}, 1, function() 
+  mymainmenu:toggle() 
+end))
+
 local mylauncher = awful.widget.launcher({
   image = beautiful.awesome_icon,
   menu = mymainmenu,
@@ -46,4 +60,5 @@ local mylauncher = awful.widget.launcher({
 return {
   menu = mymainmenu,
   launcher = mylauncher,
+  skull_launcher = skull_textbox,
 }

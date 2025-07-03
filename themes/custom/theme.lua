@@ -7,8 +7,8 @@ local xresources = require("beautiful.xresources")
 local dpi = xresources.apply_dpi
 local gears = require("gears")
 local wibox = require("wibox")
+local gfs = require("gears.filesystem")
 
--- local gfs = require("gears.filesystem")
 local themes_path = os.getenv("HOME") .. "/.config/awesome/themes/"
 
 local theme = {}
@@ -150,24 +150,15 @@ theme.layout_cornerse = themes_path .. "custom/layouts/cornerse.png"
 theme.tasklist_disable_icon = true
 
 -- Generate Awesome icon (replaced with skull icon):
--- Skull icon with fallback options
-local skull_text = "💀" -- Primary: emoji
--- local skull_text = "☠" -- Alternative 1: skull and crossbones
--- local skull_text = "⚰" -- Alternative 2: coffin
--- local skull_text = "☠️" -- Alternative 3: skull emoji with variation
+-- Try to use custom skull icon first, fallback to default
+local skull_icon_path = themes_path .. "custom/skull-icon.png"
 
-local skull_widget = wibox.widget {
-  markup = '<span font="' .. (theme.menu_height - 4) .. '" color="' .. theme.fg_focus .. '">' .. skull_text .. '</span>',
-  align = "center",
-  valign = "center",
-  widget = wibox.widget.textbox,
-}
-
-theme.awesome_icon = gears.surface.widget_to_surface(
-  skull_widget, 
-  theme.menu_height, 
-  theme.menu_height
-)
+if gfs.file_readable(skull_icon_path) then
+  theme.awesome_icon = skull_icon_path
+else
+  -- Fallback to default awesome icon
+  theme.awesome_icon = theme_assets.awesome_icon(theme.menu_height, theme.bg_focus, theme.fg_focus)
+end
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
