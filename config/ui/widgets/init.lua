@@ -10,7 +10,6 @@ widgets.temperature = require("config.ui.widgets.temperature")
 widgets.battery = require("config.ui.widgets.battery")
 widgets.pomodoro = require("config.ui.widgets.pomodoro")
 widgets.weather = require("config.ui.widgets.weather")
-widgets.theme_indicator = require("config.ui.widgets.theme-indicator")
 widgets.picom_control = require("config.ui.widgets.picom-control")
 
 return widgets

@@ -163,17 +163,21 @@ Consulte `INSTALACAO.md` para instruções detalhadas.
 - `Super + Ctrl + Shift + w`: Escolher wallpaper por padrão
 - `Super + Alt + w`: Restaurar wallpaper padrão (Samurai Yellow) 🆕
 
+**Configuração do Weather Widget:**
+```bash
+# Configurar API key e localização
+./bin/setup_weather
+
+# Ou editar manualmente o arquivo .env
+nano ~/.config/awesome/.env
+```
+
 #### Centro de Notificações
 - `Alt + n`: Abrir/fechar centro de notificações
 - `Alt + Shift + n`: Limpar todas as notificações
 
-#### Tema Dinâmico 🆕
-- `Alt + t`: Toggle tema dinâmico on/off
-- `Alt + Shift + t`: Regenerar tema do wallpaper atual
-- `Alt + Ctrl + t`: Mostrar informações do tema
-
-#### Compositor (Picom) 🆕
-- `Alt + c`: Toggle compositor on/off
+#### Compositor (Picom) 🆕 - Sempre Ativo
+- `Alt + c`: Reiniciar compositor
 - `Alt + Shift + c`: Modo performance (efeitos on/off)
 - `Alt + Ctrl + c`: Status do compositor
 
@@ -199,12 +203,8 @@ Consulte `INSTALACAO.md` para instruções detalhadas.
 - **🔔 Notifications**: Centro de notificações
   - Clique: Abrir/fechar centro
   - Contador de notificações não lidas
-- **🎨 Theme**: Indicador de tema dinâmico
-  - Clique esquerdo: Toggle on/off
-  - Clique do meio: Regenerar tema
-  - Clique direito: Informações do tema
-- **🎭 Picom**: Controle do compositor
-  - Clique esquerdo: Toggle on/off
+- **🎭 Picom**: Controle do compositor (sempre ativo)
+  - Clique esquerdo: Reiniciar compositor
   - Clique do meio: Modo performance
   - Clique direito: Menu de efeitos
 

@@ -141,8 +141,11 @@ run_once("pasystray", "pasystray")      -- Audio control
 -- Set default wallpaper (Samurai Yellow Moon)
 awful.spawn.with_shell("sleep 1 && " .. os.getenv("HOME") .. "/.config/awesome/bin/set_default_wallpaper")
 
--- Start Picom compositor with theme integration
+-- Start Picom compositor with theme integration (always keep it running)
 awful.spawn.with_shell("sleep 2 && " .. os.getenv("HOME") .. "/.config/awesome/bin/picom_manager start")
+
+-- Keep Picom always alive with simple monitoring script
+run_once(os.getenv("HOME") .. "/.config/awesome/bin/keep_picom_alive", "keep_picom_alive")
 
 -- Aguardar um pouco antes de iniciar os applets para garantir que o systray esteja pronto
 awful.spawn.easy_async_with_shell("sleep 3", function()

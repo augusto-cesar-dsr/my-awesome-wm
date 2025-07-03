@@ -17,11 +17,8 @@ require("config.error-handling")
 -- Variables and layouts (carregado ANTES do tema)
 require("config.variables")
 
--- Theme (agora pode usar as variáveis globais)
+-- Theme (using custom static theme only)
 beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/custom/theme.lua")
-
--- Dynamic Theme (initialize after base theme)
-local dynamic_theme = require("config.dynamic-theme")
 
 -- UI Components
 require("config.ui.menu")
@@ -43,6 +40,3 @@ require("config.signals")
 
 -- Autostart applications
 require("config.autostart")
-
--- Start dynamic theming (after everything is loaded)
-dynamic_theme.auto_start()

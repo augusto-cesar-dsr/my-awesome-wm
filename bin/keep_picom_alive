@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Simple script to keep Picom always running
+# Run this once and it will monitor Picom forever
+
+PICOM_MANAGER="$HOME/.config/awesome/bin/picom_manager"
+
+while true; do
+    if ! pgrep -x picom > /dev/null; then
+        # Picom is not running, start it
+        "$PICOM_MANAGER" start > /dev/null 2>&1
+        
+        # Send notification via awesome-client
+        echo "
+        local naughty = require('naughty')
+        naughty.notify({
+            title = '🎭 Picom',
+            text = 'Compositor restarted automatically',
+            timeout = 3
+        })
+        " | awesome-client 2>/dev/null
+    fi
+    
+    # Check every 10 seconds
+    sleep 10
+done

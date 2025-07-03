@@ -127,8 +127,6 @@ awful.screen.connect_for_each_screen(function(s)
       wibox.widget.textbox(" | "),
       widgets.weather.widget,
       wibox.widget.textbox(" | "),
-      widgets.theme_indicator.widget,
-      wibox.widget.textbox(" | "),
       widgets.picom_control.widget,
       wibox.widget.textbox(" | "),
       notification_center.widget,

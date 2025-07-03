@@ -1,20 +1,37 @@
 -- Weather Widget for AwesomeWM
 -- Uses OpenWeatherMap API (free tier)
+-- Configuration loaded from .env file
 
 local wibox = require("wibox")
 local awful = require("awful")
 local gears = require("gears")
 local naughty = require("naughty")
 local beautiful = require("beautiful")
+local env_loader = require("config.env-loader")
 
 local weather = {}
 
--- Configuration (you can change these)
-local API_KEY = "demo_key"  -- Replace with your OpenWeatherMap API key
-local CITY = "São Paulo"    -- Change to your city
-local COUNTRY_CODE = "BR"   -- Change to your country code
+-- Load environment variables from .env file
+local env_vars = env_loader.load_env()
+
+-- Configuration from environment variables
+local API_KEY = env_loader.get_env("WEATHER_API_KEY", "", env_vars)
+local LAT = env_loader.get_env("WEATHER_LATITUDE", "-16.823", env_vars)
+local LON = env_loader.get_env("WEATHER_LONGITUDE", "-49.244", env_vars)
+local CITY = env_loader.get_env("WEATHER_CITY", "Unknown City", env_vars)
+local COUNTRY_CODE = env_loader.get_env("WEATHER_COUNTRY_CODE", "BR", env_vars)
 local UNITS = "metric"      -- metric, imperial, or kelvin
-local UPDATE_INTERVAL = 600 -- 10 minutes in seconds
+local UPDATE_INTERVAL = 3600 -- 1 hour in seconds
+
+-- Check if API key is configured
+if API_KEY == "" or API_KEY == "your_openweathermap_api_key_here" then
+    naughty.notify({
+        title = "🌤️ Weather Widget",
+        text = "API key not configured!\nPlease set WEATHER_API_KEY in ~/.config/awesome/.env",
+        timeout = 10,
+        urgency = "critical"
+    })
+end
 
 -- Weather data
 local weather_data = {
@@ -139,8 +156,8 @@ local function fetch_weather()
     end
     
     local url = string.format(
-        "http://api.openweathermap.org/data/2.5/weather?q=%s,%s&appid=%s&units=%s",
-        CITY:gsub(" ", "%%20"), COUNTRY_CODE, API_KEY, UNITS
+        "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=%s",
+        LAT, LON, API_KEY, UNITS
     )
     
     awful.spawn.easy_async_with_shell(
@@ -183,7 +200,7 @@ local function show_weather_details()
         weather_data.humidity,
         weather_data.last_update
     )
-    
+
     naughty.notify({
         title = "Weather Details",
         text = details,
@@ -212,10 +229,14 @@ local weather_tooltip = awful.tooltip({
     text = "🌤️ Weather Widget\n" ..
            "Left click: Refresh\n" ..
            "Right click: Details\n\n" ..
-           "To use real data:\n" ..
+           "Configuration:\n" ..
+           "• API Key: " .. (API_KEY ~= "" and "✅ Configured" or "❌ Missing") .. "\n" ..
+           "• Location: " .. LAT .. ", " .. LON .. "\n" ..
+           "• City: " .. CITY .. "\n\n" ..
+           "To configure:\n" ..
            "1. Get free API key from openweathermap.org\n" ..
-           "2. Edit config/ui/widgets/weather.lua\n" ..
-           "3. Set API_KEY and CITY variables"
+           "2. Edit ~/.config/awesome/.env\n" ..
+           "3. Set WEATHER_API_KEY, WEATHER_LATITUDE, WEATHER_LONGITUDE"
 })
 
 -- Auto-update timer

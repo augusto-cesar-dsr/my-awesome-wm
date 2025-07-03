@@ -127,15 +127,15 @@ local globalkeys = gears.table.join(
   end, { description = "show resource monitor status", group = "my managements" }),
 
   -- Scratchpads (moved from F12 to Alt + numbers for better accessibility)
-  awful.key({ "Mod1" }, "1", function()
+  awful.key({ "Mod1", "Control" }, "1", function()
     scratchpads.terminal:toggle()
   end, { description = "toggle terminal scratchpad", group = "scratchpads" }),
 
-  awful.key({ "Mod1" }, "2", function()
+  awful.key({ "Mod1", "Control" }, "2", function()
     scratchpads.calculator:toggle()
   end, { description = "toggle calculator scratchpad", group = "scratchpads" }),
 
-  awful.key({ "Mod1" }, "3", function()
+  awful.key({ "Mod1", "Control" }, "3", function()
     scratchpads.notes:toggle()
   end, { description = "toggle notes scratchpad (nvim)", group = "scratchpads" }),
 
@@ -247,7 +247,6 @@ end
 local pomodoro = require("config.ui.widgets.pomodoro")
 local weather = require("config.ui.widgets.weather")
 local notification_center = require("config.ui.notification-center")
-local dynamic_theme = require("config.dynamic-theme")
 local picom_control = require("config.ui.widgets.picom-control")
 
 globalkeys = gears.table.join(globalkeys,
@@ -287,17 +286,9 @@ globalkeys = gears.table.join(globalkeys,
     awful.key({ "Mod1", "Shift" }, "n", function() notification_center.clear_all() end,
               {description = "clear all notifications", group = "notifications"}),
     
-    -- Dynamic Theme controls (using Alt + T)
-    awful.key({ "Mod1" }, "t", function() dynamic_theme.toggle() end,
-              {description = "toggle dynamic theming", group = "theme"}),
-    awful.key({ "Mod1", "Shift" }, "t", function() dynamic_theme.regenerate() end,
-              {description = "regenerate theme from wallpaper", group = "theme"}),
-    awful.key({ "Mod1", "Control" }, "t", function() dynamic_theme.show_info() end,
-              {description = "show dynamic theme info", group = "theme"}),
-    
     -- Picom Compositor controls (using Alt + C)
-    awful.key({ "Mod1" }, "c", function() picom_control.toggle() end,
-              {description = "toggle picom compositor", group = "compositor"}),
+    awful.key({ "Mod1" }, "c", function() picom_control.restart() end,
+              {description = "restart picom compositor", group = "compositor"}),
     awful.key({ "Mod1", "Shift" }, "c", function() picom_control.toggle_performance() end,
               {description = "toggle picom performance mode", group = "compositor"}),
     awful.key({ "Mod1", "Control" }, "c", function() picom_control.show_status() end,

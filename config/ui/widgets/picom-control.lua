@@ -54,11 +54,11 @@ local function update_widget()
         if picom_status.running then
             icon_widget.text = "🎭"
             status_widget.text = "ON"
-            picom_widget.fg = "#48dbfb"  -- Active color
+            picom_widget.fg = "#48dbfb"  -- Active color (always active)
         else
             icon_widget.text = "🎭"
-            status_widget.text = "OFF"
-            picom_widget.fg = "#a4b0be"  -- Inactive color
+            status_widget.text = "STARTING"
+            picom_widget.fg = "#feca57"  -- Starting color
         end
     end)
     
@@ -80,8 +80,8 @@ local function check_picom_status()
     end)
 end
 
--- Toggle picom
-local function toggle_picom()
+-- Restart picom (instead of toggle)
+local function restart_picom()
     if not picom_status.initialized then
         naughty.notify({
             title = "🎭 Picom",
@@ -91,24 +91,30 @@ local function toggle_picom()
         return
     end
     
-    awful.spawn.easy_async_with_shell(PICOM_MANAGER_SCRIPT .. " toggle", function(stdout, stderr, reason, exit_code)
+    naughty.notify({
+        title = "🎭 Picom",
+        text = "Restarting compositor...",
+        timeout = 2
+    })
+    
+    awful.spawn.easy_async_with_shell(PICOM_MANAGER_SCRIPT .. " restart", function(stdout, stderr, reason, exit_code)
         if exit_code == 0 then
             -- Wait a moment then check status
             gears.timer {
-                timeout = 1,
+                timeout = 2,
                 single_shot = true,
                 callback = check_picom_status
             }:start()
             
             naughty.notify({
                 title = "🎭 Picom",
-                text = "Compositor toggled",
+                text = "Compositor restarted successfully",
                 timeout = 2
             })
         else
             naughty.notify({
                 title = "🎭 Picom Error",
-                text = "Failed to toggle Picom",
+                text = "Failed to restart compositor",
                 timeout = 5,
                 urgency = "critical"
             })
@@ -159,8 +165,8 @@ end
 
 -- Mouse controls
 picom_widget:connect_signal("button::press", function(_, _, _, button)
-    if button == 1 then      -- Left click: toggle picom
-        toggle_picom()
+    if button == 1 then      -- Left click: restart picom
+        restart_picom()
     elseif button == 2 then  -- Middle click: performance mode
         toggle_performance_mode()
     elseif button == 3 then  -- Right click: context menu
@@ -172,12 +178,12 @@ end)
 -- Tooltip
 local picom_tooltip = awful.tooltip({
     objects = { picom_widget },
-    text = "🎭 Picom Compositor\n" ..
-           "Left click: Toggle on/off\n" ..
+    text = "🎭 Picom Compositor (Always Active)\n" ..
+           "Left click: Restart compositor\n" ..
            "Middle click: Performance mode\n" ..
            "Right click: Menu\n\n" ..
            "Keybindings:\n" ..
-           "Alt+c: Toggle\n" ..
+           "Alt+c: Restart\n" ..
            "Alt+Shift+c: Performance\n" ..
            "Alt+Ctrl+c: Status"
 })
@@ -205,7 +211,7 @@ gears.timer {
 
 -- Export functions
 picom_control.widget = picom_widget
-picom_control.toggle = toggle_picom
+picom_control.restart = restart_picom
 picom_control.show_status = show_status
 picom_control.toggle_performance = toggle_performance_mode
 
