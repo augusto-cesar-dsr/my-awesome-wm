@@ -126,11 +126,6 @@ local globalkeys = gears.table.join(
     awful.spawn("bash " .. scripts_path .. "backup_config")
   end, { description = "backup awesome config", group = "my managements" }),
 
-  -- Resource monitor status
-  awful.key({ modkey, "Shift" }, "r", function()
-    awful.spawn(terminal .. " -e bash " .. scripts_path .. "resource_monitor status")
-  end, { description = "show resource monitor status", group = "my managements" }),
-
   -- Scratchpads (moved from F12 to Alt + numbers for better accessibility)
   awful.key({ "Mod1", "Control" }, "1", function()
     scratchpads.terminal:toggle()

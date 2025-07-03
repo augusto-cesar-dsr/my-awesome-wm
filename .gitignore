@@ -1,6 +1,17 @@
-versions/*
-CONTEXTO_TECNICO.md
-MELHORIAS_TODO.md
+# Logs
 *.log
-*.md
+
+# Environment files
 .env
+.env.*
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Wallpaper cache
+.current_wallpaper
+
+# Test files
+test_*.lua

@@ -1,71 +1,27 @@
 #!/bin/bash
 
-# AwesomeWM Configuration Backup Script
-# Cria backup completo da configuração do AwesomeWM
+# Git-based backup for AwesomeWM configuration
+cd "$HOME/.config/awesome" || exit 1
 
-CONFIG_DIR="$HOME/.config/awesome"
-BACKUP_DIR="$HOME/.config/awesome_backups"
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_NAME="awesome_backup_$TIMESTAMP"
-
-# Criar diretório de backup se não existir
-mkdir -p "$BACKUP_DIR"
-
-# Função para mostrar progresso
-show_progress() {
-    echo "🔄 $1"
-}
-
-# Função para mostrar sucesso
-show_success() {
-    echo "✅ $1"
-}
-
-# Função para mostrar erro
-show_error() {
-    echo "❌ $1"
-}
-
-show_progress "Iniciando backup da configuração AwesomeWM..."
-
-# Verificar se o diretório de configuração existe
-if [ ! -d "$CONFIG_DIR" ]; then
-    show_error "Diretório de configuração não encontrado: $CONFIG_DIR"
+# Check if git repo exists
+if [ ! -d ".git" ]; then
+    echo "❌ Not a git repository. Initialize with: git init"
     exit 1
 fi
 
-# Criar backup
-show_progress "Criando backup em: $BACKUP_DIR/$BACKUP_NAME"
+# Add all changes
+git add -A
 
-if cp -r "$CONFIG_DIR" "$BACKUP_DIR/$BACKUP_NAME"; then
-    show_success "Backup criado com sucesso!"
-    
-    # Mostrar informações do backup
-    echo ""
-    echo "📁 Backup salvo em: $BACKUP_DIR/$BACKUP_NAME"
-    echo "📊 Tamanho do backup: $(du -sh "$BACKUP_DIR/$BACKUP_NAME" | cut -f1)"
-    echo "🕒 Data/Hora: $(date)"
-    echo "👤 Usuário: $USER"
-    
-    # Listar arquivos principais no backup
-    echo ""
-    echo "📋 Arquivos principais incluídos:"
-    find "$BACKUP_DIR/$BACKUP_NAME" -name "*.lua" -o -name "*.md" | head -10 | sed 's|.*/||' | sort | sed 's/^/   • /'
-    
-    # Limpar backups antigos (manter apenas os 5 mais recentes)
-    show_progress "Limpando backups antigos..."
-    cd "$BACKUP_DIR" || exit 1
-    ls -t | grep "awesome_backup_" | tail -n +6 | xargs -r rm -rf
-    
-    # Mostrar backups disponíveis
-    echo ""
-    echo "💾 Backups disponíveis:"
-    ls -t "$BACKUP_DIR" | grep "awesome_backup_" | head -5 | sed 's/^/   • /'
-    
-else
-    show_error "Falha ao criar backup!"
-    exit 1
+# Check if there are changes to commit
+if git diff --cached --quiet; then
+    echo "✅ No changes to backup"
+    exit 0
 fi
 
-echo ""
-show_success "Backup concluído com sucesso! 🎉"
+# Create commit with timestamp
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+git commit -m "backup: automatic backup - $TIMESTAMP"
+
+echo "✅ Configuration backed up successfully"
+echo "📊 Recent commits:"
+git log --oneline -5
