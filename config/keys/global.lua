@@ -114,7 +114,12 @@ local globalkeys = gears.table.join(
   -- Audio manager (mudando de Super+b para Super+Shift+a para evitar conflito)
   awful.key({ modkey, "Shift" }, "a", function()
     awful.spawn("bash " .. scripts_path .. "audio_manager")
-  end, { description = "audio manager", group = "my managements" }),
+  end, { description = "audio device manager", group = "my managements" }),
+
+  -- Bluetooth audio toggle
+  awful.key({ modkey, "Control" }, "a", function()
+    awful.spawn("bash " .. scripts_path .. "bluetooth_audio_helper toggle")
+  end, { description = "toggle bluetooth/internal audio", group = "my managements" }),
 
   -- Backup configuration
   awful.key({ modkey, "Shift" }, "b", function()
@@ -243,29 +248,7 @@ for i = 1, 9 do
   )
 end
 
--- Pomodoro controls (moved to accessible keys)
-local pomodoro = require("config.ui.widgets.pomodoro")
-local weather = require("config.ui.widgets.weather")
-local notification_center = require("config.ui.notification-center")
-local picom_control = require("config.ui.widgets.picom-control")
-
 globalkeys = gears.table.join(globalkeys,
-    -- Pomodoro Timer (using Alt + P combinations)
-    awful.key({ "Mod1" }, "p", function() pomodoro.toggle() end,
-              {description = "toggle pomodoro timer", group = "pomodoro"}),
-    awful.key({ "Mod1", "Shift" }, "p", function() pomodoro.status() end,
-              {description = "show pomodoro status", group = "pomodoro"}),
-    awful.key({ "Mod1", "Control" }, "p", function() pomodoro.skip() end,
-              {description = "skip current pomodoro phase", group = "pomodoro"}),
-    awful.key({ "Mod1", "Control", "Shift" }, "p", function() pomodoro.stop() end,
-              {description = "stop/reset pomodoro timer", group = "pomodoro"}),
-    
-    -- Weather controls (using Alt + W)
-    awful.key({ "Mod1" }, "w", function() weather.show_details() end,
-              {description = "show weather details", group = "weather"}),
-    awful.key({ "Mod1", "Shift" }, "w", function() weather.refresh() end,
-              {description = "refresh weather data", group = "weather"}),
-    
     -- Wallpaper controls (keeping Super+Ctrl+w as it doesn't conflict)
     awful.key({ modkey, "Control" }, "w", function() 
         awful.spawn.with_shell(os.getenv("HOME") .. "/.config/awesome/bin/wallpaper_manager random")
@@ -278,21 +261,7 @@ globalkeys = gears.table.join(globalkeys,
     -- Default wallpaper (Samurai Yellow Moon)
     awful.key({ modkey, "Mod1" }, "w", function()
         awful.spawn.with_shell(os.getenv("HOME") .. "/.config/awesome/bin/set_default_wallpaper")
-    end, {description = "restore default wallpaper (samurai yellow)", group = "wallpaper"}),
-    
-    -- Notification Center (using Alt + N)
-    awful.key({ "Mod1" }, "n", function() notification_center.toggle() end,
-              {description = "toggle notification center", group = "notifications"}),
-    awful.key({ "Mod1", "Shift" }, "n", function() notification_center.clear_all() end,
-              {description = "clear all notifications", group = "notifications"}),
-    
-    -- Picom Compositor controls (using Alt + C)
-    awful.key({ "Mod1" }, "c", function() picom_control.restart() end,
-              {description = "restart picom compositor", group = "compositor"}),
-    awful.key({ "Mod1", "Shift" }, "c", function() picom_control.toggle_performance() end,
-              {description = "toggle picom performance mode", group = "compositor"}),
-    awful.key({ "Mod1", "Control" }, "c", function() picom_control.show_status() end,
-              {description = "show picom status", group = "compositor"})
+    end, {description = "restore default wallpaper (samurai yellow)", group = "wallpaper"})
 )
 
 -- Set global keys

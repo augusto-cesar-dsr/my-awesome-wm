@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Debug script for autostart applications
+# Shows what's running and what should be running
+
+echo "🔍 AwesomeWM Autostart Debug"
+echo "============================"
+echo ""
+
+# Check system tray readiness
+echo "📊 System Tray Status:"
+echo "  X11 Display: $DISPLAY"
+echo "  Session Type: $XDG_SESSION_TYPE"
+echo "  Desktop: $XDG_CURRENT_DESKTOP"
+echo ""
+
+# Check applets
+echo "🔧 System Applets:"
+echo "  nm-applet: $(pgrep -x nm-applet >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo "  blueman-applet: $(pgrep -x blueman-applet >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo "  pasystray: $(pgrep -x pasystray >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo ""
+
+# Check main applications
+echo "🚀 Main Applications:"
+echo "  Terminal (gnome-terminal): $(pgrep -x gnome-terminal-server >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo "  Chrome: $(pgrep -f 'google-chrome.*--type=browser' >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo "  Slack: $(pgrep -x slack >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo ""
+
+# Check Picom
+echo "🎭 Compositor:"
+echo "  Picom: $(pgrep -x picom >/dev/null && echo '✅ Running' || echo '❌ Not running')"
+echo ""
+
+# Check AwesomeWM tags and clients
+echo "🏷️  AwesomeWM Tags & Clients:"
+awesome-client 'for s in screen do for i, t in ipairs(s.tags) do print("Tag " .. i .. " (" .. t.name .. "): " .. #t:clients() .. " clients") end end' 2>/dev/null || echo "  Could not connect to AwesomeWM"
+echo ""
+
+# Check if applications are installed
+echo "📦 Application Availability:"
+echo "  nm-applet: $(which nm-applet >/dev/null && echo '✅ Installed' || echo '❌ Not installed')"
+echo "  blueman-applet: $(which blueman-applet >/dev/null && echo '✅ Installed' || echo '❌ Not installed')"
+echo "  pasystray: $(which pasystray >/dev/null && echo '✅ Installed' || echo '❌ Not installed')"
+echo "  google-chrome-stable: $(which google-chrome-stable >/dev/null && echo '✅ Installed' || echo '❌ Not installed')"
+echo "  slack: $(which slack >/dev/null && echo '✅ Installed' || echo '❌ Not installed')"
+echo ""
+
+# Show recent autostart attempts
+echo "📝 Recent Process Starts (last 2 minutes):"
+ps -eo pid,lstart,cmd | grep -E "(nm-applet|blueman-applet|pasystray|google-chrome|slack|gnome-terminal)" | grep "$(date '+%a %b %d')" | tail -10
+echo ""
+
+echo "💡 Tips:"
+echo "  - If applets are missing, try: sudo apt install network-manager-gnome blueman pasystray"
+echo "  - If applications don't start, check if they're installed"
+echo "  - System tray needs time to initialize (5+ seconds after login)"
+echo "  - Run this script again after 30 seconds if just logged in"

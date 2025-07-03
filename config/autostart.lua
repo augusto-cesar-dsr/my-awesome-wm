@@ -28,25 +28,18 @@ end
 
 -- Função específica para verificar Chrome rodando
 local function chrome_is_running()
-  -- Verifica apenas por janela (não por processo em background)
+  -- Primeiro verifica se há janela do Chrome
   local has_window = app_has_window({"google-chrome", "Google-chrome", "chromium", "Chromium"})
   if has_window then 
-    naughty.notify({title = "Chrome Debug", text = "Chrome window found"})
     return true 
   end
   
-  -- Verifica processo chrome principal (não crash handlers)
-  local handle = io.popen("pgrep -u $USER -f 'google-chrome.*--type=browser' 2>/dev/null")
+  -- Verifica processo chrome principal (não crash handlers ou background processes)
+  local handle = io.popen("pgrep -u $USER -f 'google-chrome.*--type=browser' 2>/dev/null | head -1")
   local result = handle:read("*a")
   handle:close()
   
-  if result and result:match("%d+") then
-    naughty.notify({title = "Chrome Debug", text = "Chrome browser process found"})
-    return true
-  end
-  
-  naughty.notify({title = "Chrome Debug", text = "No Chrome found - will start"})
-  return false
+  return result and result:match("%d+") ~= nil
 end
 
 -- Aplicações que iniciam automaticamente
@@ -55,7 +48,7 @@ local autostart_apps = {
   {
     cmd = terminal .. " -e nvim",
     tag = "󰨞",
-    delay = 2,
+    delay = 3,
     check_classes = {"gnome-terminal", "Gnome-terminal", "alacritty", "kitty", "xterm"},
     check_tag_only = "󰨞", -- Verifica apenas na tag específica
   },
@@ -64,7 +57,7 @@ local autostart_apps = {
   {
     cmd = "slack",
     tag = "󰒱",
-    delay = 4,
+    delay = 6,
     check_classes = {"slack"},
     process_name = "slack",
   },
@@ -73,7 +66,7 @@ local autostart_apps = {
   {
     cmd = "google-chrome-stable --profile-directory='Profile 1'",
     tag = "󰖟",
-    delay = 8,
+    delay = 10,
     check_classes = {"google-chrome", "Google-chrome", "chromium", "Chromium"},
     process_name = "chrome", -- Processo mais genérico para detecção
   },
@@ -99,18 +92,46 @@ end
 -- Função para iniciar apps com delay e verificações
 local function delayed_spawn(app)
   awful.spawn.easy_async_with_shell("sleep " .. app.delay, function()
+    -- Debug: Log da tentativa
+    naughty.notify({
+      title = "🚀 Autostart",
+      text = "Checking " .. (app.process_name or "app") .. " after " .. app.delay .. "s delay",
+      timeout = 3
+    })
+    
     -- Verificar se deve iniciar a aplicação
     local should_start = false
     
     if app.check_tag_only then
       -- Verifica apenas na tag específica (para terminal)
       should_start = not app_exists_in_tag(app.check_classes, app.check_tag_only)
+      if should_start then
+        naughty.notify({
+          title = "🖥️ Terminal",
+          text = "Starting terminal with nvim in tag " .. app.check_tag_only,
+          timeout = 3
+        })
+      end
     elseif app.tag == "󰖟" then
       -- Verificação especial para Chrome
       should_start = not chrome_is_running()
+      if should_start then
+        naughty.notify({
+          title = "🌐 Chrome",
+          text = "Starting Chrome browser",
+          timeout = 3
+        })
+      end
     else
       -- Verifica globalmente (para slack)
       should_start = not app_has_window(app.check_classes)
+      if should_start then
+        naughty.notify({
+          title = "💬 Slack",
+          text = "Starting Slack application",
+          timeout = 3
+        })
+      end
     end
     
     if should_start then
@@ -120,10 +141,21 @@ local function delayed_spawn(app)
 
       if tag then
         tag:view_only()
+        -- Aguardar um pouco para a tag mudar
+        awful.spawn.easy_async_with_shell("sleep 0.5", function()
+          -- Inicia a aplicação
+          awful.spawn.with_shell(app.cmd)
+        end)
+      else
+        -- Se não encontrar a tag, inicia mesmo assim
+        awful.spawn.with_shell(app.cmd)
       end
-
-      -- Inicia a aplicação
-      awful.spawn.with_shell(app.cmd)
+    else
+      naughty.notify({
+        title = "ℹ️ Autostart",
+        text = (app.process_name or "App") .. " already running, skipping",
+        timeout = 2
+      })
     end
   end)
 end
@@ -133,10 +165,10 @@ for _, app in ipairs(autostart_apps) do
   delayed_spawn(app)
 end
 
--- Outras aplicações de sistema (sem delay) - apenas se não estiverem rodando
-run_once("nm-applet", "nm-applet")      -- Network manager
-run_once("blueman-applet", "blueman-applet") -- Bluetooth  
-run_once("pasystray", "pasystray")      -- Audio control
+-- Outras aplicações de sistema - removidas daqui pois serão iniciadas com delay
+-- run_once("nm-applet", "nm-applet")      -- Network manager
+-- run_once("blueman-applet", "blueman-applet") -- Bluetooth  
+-- run_once("pasystray", "pasystray")      -- Audio control
 
 -- Set default wallpaper (Samurai Yellow Moon)
 awful.spawn.with_shell("sleep 1 && " .. os.getenv("HOME") .. "/.config/awesome/bin/set_default_wallpaper")
@@ -147,9 +179,34 @@ awful.spawn.with_shell("sleep 2 && " .. os.getenv("HOME") .. "/.config/awesome/b
 -- Keep Picom always alive with simple monitoring script
 run_once(os.getenv("HOME") .. "/.config/awesome/bin/keep_picom_alive", "keep_picom_alive")
 
--- Aguardar um pouco antes de iniciar os applets para garantir que o systray esteja pronto
-awful.spawn.easy_async_with_shell("sleep 3", function()
+-- Aguardar mais tempo antes de iniciar os applets para garantir que o systray esteja pronto
+awful.spawn.easy_async_with_shell("sleep 5", function()
+  naughty.notify({
+    title = "🔧 System Tray",
+    text = "Starting system applets...",
+    timeout = 3
+  })
+  
+  -- Network Manager Applet
   run_once("nm-applet", "nm-applet")
-  run_once("blueman-applet", "blueman-applet") 
-  run_once("pasystray", "pasystray")
+  
+  -- Aguardar um pouco entre cada applet
+  awful.spawn.easy_async_with_shell("sleep 1", function()
+    -- Bluetooth Manager Applet  
+    run_once("blueman-applet", "blueman-applet")
+    
+    awful.spawn.easy_async_with_shell("sleep 1", function()
+      -- Audio System Tray
+      run_once("pasystray", "pasystray")
+      
+      -- Notificação final
+      awful.spawn.easy_async_with_shell("sleep 2", function()
+        naughty.notify({
+          title = "✅ System Ready",
+          text = "All system applets started",
+          timeout = 3
+        })
+      end)
+    end)
+  end)
 end)

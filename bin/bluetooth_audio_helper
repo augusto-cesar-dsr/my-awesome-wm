@@ -1,0 +1,113 @@
+#!/bin/bash
+
+# Bluetooth Audio Helper
+# Automatically switches to Bluetooth audio when connected
+# Can be used with udev rules or manually
+
+# Function to check if Bluetooth audio device is connected
+check_bluetooth_audio() {
+    # Check for Bluetooth audio sinks (more flexible pattern)
+    bt_sinks=$(pactl list short sinks | grep -E "(bluetooth|bluez)" | cut -f2)
+    
+    if [ -n "$bt_sinks" ]; then
+        echo "Bluetooth audio devices found:"
+        echo "$bt_sinks"
+        return 0
+    else
+        echo "No Bluetooth audio devices found"
+        return 1
+    fi
+}
+
+# Function to auto-switch to Bluetooth when available
+auto_switch_bluetooth() {
+    bt_sink=$(pactl list short sinks | grep -E "(bluetooth|bluez)" | head -1 | cut -f2)
+    
+    if [ -n "$bt_sink" ]; then
+        current_sink=$(pactl get-default-sink)
+        
+        if [ "$current_sink" != "$bt_sink" ]; then
+            echo "Switching to Bluetooth audio: $bt_sink"
+            pactl set-default-sink "$bt_sink"
+            
+            # Move existing streams
+            for input in $(pactl list short sink-inputs | cut -f1); do
+                pactl move-sink-input "$input" "$bt_sink" 2>/dev/null
+            done
+            
+            # Get friendly name
+            description=$(pactl list sinks | grep -A 20 "Name: $bt_sink" | grep "Description:" | cut -d: -f2- | sed 's/^ *//')
+            
+            notify-send "🎧 Bluetooth Audio" "Conectado automaticamente: $description" -t 4000
+            return 0
+        else
+            echo "Already using Bluetooth audio"
+            return 0
+        fi
+    else
+        echo "No Bluetooth audio devices available"
+        return 1
+    fi
+}
+
+# Function to switch back to internal audio
+switch_to_internal() {
+    internal_sink=$(pactl list short sinks | grep -v -E "(bluetooth|bluez)" | grep -E "(analog|built-in|internal)" | head -1 | cut -f2)
+    
+    if [ -z "$internal_sink" ]; then
+        # Fallback to first non-bluetooth sink
+        internal_sink=$(pactl list short sinks | grep -v -E "(bluetooth|bluez)" | head -1 | cut -f2)
+    fi
+    
+    if [ -n "$internal_sink" ]; then
+        echo "Switching to internal audio: $internal_sink"
+        pactl set-default-sink "$internal_sink"
+        
+        # Move existing streams
+        for input in $(pactl list short sink-inputs | cut -f1); do
+            pactl move-sink-input "$input" "$internal_sink" 2>/dev/null
+        done
+        
+        description=$(pactl list sinks | grep -A 20 "Name: $internal_sink" | grep "Description:" | cut -d: -f2- | sed 's/^ *//')
+        notify-send "🔊 Audio Interno" "Voltou para: $description" -t 3000
+        return 0
+    else
+        echo "No internal audio devices found"
+        return 1
+    fi
+}
+
+# Main logic based on argument
+case "$1" in
+    "check")
+        check_bluetooth_audio
+        ;;
+    "auto")
+        auto_switch_bluetooth
+        ;;
+    "internal")
+        switch_to_internal
+        ;;
+    "toggle")
+        if check_bluetooth_audio >/dev/null 2>&1; then
+            current_sink=$(pactl get-default-sink)
+            if echo "$current_sink" | grep -qE "(bluetooth|bluez)"; then
+                switch_to_internal
+            else
+                auto_switch_bluetooth
+            fi
+        else
+            echo "No Bluetooth audio devices available for toggle"
+        fi
+        ;;
+    *)
+        echo "Bluetooth Audio Helper"
+        echo "Usage: $0 {check|auto|internal|toggle}"
+        echo ""
+        echo "  check    - Check for Bluetooth audio devices"
+        echo "  auto     - Auto-switch to Bluetooth if available"
+        echo "  internal - Switch back to internal audio"
+        echo "  toggle   - Toggle between Bluetooth and internal"
+        exit 1
+        ;;
+esac

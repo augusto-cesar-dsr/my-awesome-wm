@@ -39,12 +39,19 @@ Consulte `INSTALACAO.md` para instruções detalhadas.
 ├── check-deps.sh             # 🆕 Verificador de dependências
 ├── demo.sh                   # 🆕 Demonstração das funcionalidades
 ├── bin/                      # Scripts executáveis
-│   ├── audio_manager         # Gerenciador de áudio
+│   ├── audio_manager         # 🎵 Gerenciador de áudio avançado
+│   ├── bluetooth_audio_helper # 🎧 Helper para áudio Bluetooth
 │   ├── brightness_control    # Controle de brilho
 │   ├── logout               # Opções de energia
 │   ├── rofi_change_display  # Opções de display
 │   ├── backup_config        # 🆕 Backup automático da configuração
-│   └── resource_monitor     # 🆕 Monitor de recursos do sistema
+│   ├── wallpaper_manager    # 🖼️ Gerenciador de wallpapers
+│   ├── set_default_wallpaper # Wallpaper padrão
+│   ├── picom_manager        # 🎭 Gerenciador do Picom
+│   ├── keep_picom_alive     # Monitor do Picom
+│   ├── debug_autostart      # 🔍 Debug do autostart
+│   ├── test_autostart       # 🧪 Teste dos applets
+│   └── force_autostart      # 🚀 Força início das aplicações
 ├── config/
 │   ├── error-handling.lua    # Tratamento de erros
 │   ├── variables.lua         # Variáveis globais e configurações
@@ -145,41 +152,20 @@ Consulte `INSTALACAO.md` para instruções detalhadas.
 - `XF86MonBrightnessDown`: Diminuir brilho (-10%)
 - `Ctrl + 1`: Opções de display (rofi_change_display)
 - `Super + Ctrl + l`: Opções de energia (logout)
-- `Super + Shift + a`: Gerenciador de áudio
+- `Super + Shift + a`: Gerenciador de áudio (seleção de dispositivos)
+- `Super + Ctrl + a`: Toggle Bluetooth/áudio interno
 - `Super + Shift + b`: Backup da configuração
-- `Super + Shift + r`: Status do monitor de recursos
 
 ### Produtividade (Fase 2) 🆕
-#### Pomodoro Timer
-- `Alt + p`: Start/Pause timer
-- `Alt + Shift + p`: Mostrar status
-- `Alt + Ctrl + p`: Pular fase atual
-- `Alt + Ctrl + Shift + p`: Parar/resetar timer
-
-#### Weather & Wallpaper
-- `Alt + w`: Mostrar detalhes do clima
-- `Alt + Shift + w`: Atualizar dados do clima
+#### Wallpaper
 - `Super + Ctrl + w`: Wallpaper aleatório
 - `Super + Ctrl + Shift + w`: Escolher wallpaper por padrão
 - `Super + Alt + w`: Restaurar wallpaper padrão (Samurai Yellow) 🆕
 
-**Configuração do Weather Widget:**
-```bash
-# Configurar API key e localização
-./bin/setup_weather
-
-# Ou editar manualmente o arquivo .env
-nano ~/.config/awesome/.env
-```
-
-#### Centro de Notificações
-- `Alt + n`: Abrir/fechar centro de notificações
-- `Alt + Shift + n`: Limpar todas as notificações
-
 #### Compositor (Picom) 🆕 - Sempre Ativo
-- `Alt + c`: Reiniciar compositor
-- `Alt + Shift + c`: Modo performance (efeitos on/off)
-- `Alt + Ctrl + c`: Status do compositor
+- Picom roda automaticamente em background
+- Efeitos visuais sempre ativos (transparências, cantos arredondados)
+- Monitoramento automático para manter sempre funcionando
 
 ### Scratchpads (Janelas Flutuantes Rápidas)
 - `Alt + 1`: Terminal dropdown (estilo Quake)
@@ -190,29 +176,37 @@ nano ~/.config/awesome/.env
 - **CPU**: Mostra uso da CPU com cores (verde/amarelo/vermelho)
 - **RAM**: Mostra uso da memória com percentual
 - **Network**: Mostra velocidade de download/upload
+- **Temperature**: Mostra temperatura do sistema
+- **Battery**: Mostra status da bateria (se disponível)
 - **Volume**: Mostra volume atual com controle por mouse
   - Clique: alternar mudo
   - Scroll: ajustar volume
-- **🍅 Pomodoro**: Timer de produtividade (25min trabalho / 5min pausa)
-  - Clique esquerdo: Start/Pause
-  - Clique direito: Stop/Reset
-  - Clique do meio: Status
-- **🌤️ Weather**: Informações meteorológicas
-  - Clique esquerdo: Atualizar
-  - Clique direito: Detalhes
-- **🔔 Notifications**: Centro de notificações
-  - Clique: Abrir/fechar centro
-  - Contador de notificações não lidas
-- **🎭 Picom**: Controle do compositor (sempre ativo)
-  - Clique esquerdo: Reiniciar compositor
-  - Clique do meio: Modo performance
-  - Clique direito: Menu de efeitos
 
 ## Aplicações Auto-inicializadas
 
-1. **Nvim** (Tag 1) - delay 2s
-2. **Slack** (Tag 2) - delay 4s  
-3. **Chrome** (Tag 3) - delay 6s com perfil de trabalho
+1. **Nvim** (Tag 1) - delay 3s
+2. **Slack** (Tag 2) - delay 6s  
+3. **Chrome** (Tag 3) - delay 10s com perfil de trabalho
+
+### System Applets (delay 5s+):
+- **nm-applet**: Gerenciador de rede
+- **blueman-applet**: Gerenciador de Bluetooth
+- **pasystray**: Controle de áudio no system tray
+
+### 🔧 Troubleshooting Autostart:
+
+```bash
+# Verificar status das aplicações
+./bin/debug_autostart
+
+# Testar applets manualmente
+./bin/test_autostart
+
+# Reiniciar apenas os applets
+pkill nm-applet blueman-applet pasystray
+sleep 2
+nm-applet & blueman-applet & pasystray &
+```
 
 ## Personalização
 

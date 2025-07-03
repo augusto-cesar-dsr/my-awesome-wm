@@ -1,22 +1,95 @@
 #!/bin/bash
 
-# Lista os sinks disponíveis
-sinks=$(pactl list short sinks | cut -f2)
+# Audio Manager - Enhanced version for AwesomeWM
+# Handles audio device switching, especially useful for Bluetooth headphones
 
-# Usa o rofi pra selecionar
-selected_sink=$(echo "$sinks" | rofi -dmenu -p "Escolha saída de áudio")
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Function to get friendly device names
+get_friendly_name() {
+    local sink_name="$1"
+    local description=$(pactl list sinks | grep -A 20 "Name: $sink_name" | grep "Description:" | cut -d: -f2- | sed 's/^ *//')
+    
+    # If no description found, use the sink name
+    if [ -z "$description" ]; then
+        description="$sink_name"
+    fi
+    
+    # Add icons for common device types
+    case "$description" in
+        *"Bluetooth"*|*"bluetooth"*|*"BT"*)
+            echo "🎧 $description"
+            ;;
+        *"USB"*|*"usb"*)
+            echo "🔌 $description"
+            ;;
+        *"HDMI"*|*"hdmi"*)
+            echo "📺 $description"
+            ;;
+        *"Built-in"*|*"Internal"*|*"Analog"*)
+            echo "🔊 $description"
+            ;;
+        *)
+            echo "🎵 $description"
+            ;;
+    esac
+}
+
+# Get current default sink
+current_sink=$(pactl get-default-sink)
+
+# Lista os sinks disponíveis com nomes amigáveis
+sinks_raw=$(pactl list short sinks | cut -f2)
+sinks_friendly=""
+
+while IFS= read -r sink; do
+    friendly_name=$(get_friendly_name "$sink")
+    # Mark current sink
+    if [ "$sink" = "$current_sink" ]; then
+        friendly_name="✅ $friendly_name (atual)"
+    fi
+    sinks_friendly="$sinks_friendly$friendly_name|$sink\n"
+done <<< "$sinks_raw"
+
+# Remove trailing newline
+sinks_friendly=$(echo -e "$sinks_friendly" | head -n -1)
+
+# Usa o rofi para selecionar com tema customizado
+selected_line=$(echo -e "$sinks_friendly" | cut -d'|' -f1 | rofi -dmenu -i -p "🎵 Escolha saída de áudio" -theme-str 'window {width: 600px;}')
 
 # Se o usuário cancelar (nada selecionado), sai
+[ -z "$selected_line" ] && exit
+
+# Extract the actual sink name
+selected_sink=$(echo -e "$sinks_friendly" | grep -F "$selected_line" | cut -d'|' -f2)
+
+# Se não conseguir extrair o sink, sai
 [ -z "$selected_sink" ] && exit
 
 # Define o sink escolhido como default
 pactl set-default-sink "$selected_sink"
 
-# Move todas as streams de áudio pra ele
+# Move todas as streams de áudio para o novo sink
+moved_streams=0
 for input in $(pactl list short sink-inputs | cut -f1); do
-    pactl move-sink-input "$input" "$selected_sink"
+    pactl move-sink-input "$input" "$selected_sink" 2>/dev/null && ((moved_streams++))
 done
 
-# Notificação opcional
-notify-send "Áudio redirecionado para:" "$selected_sink"
+# Get friendly name for notification
+friendly_name=$(get_friendly_name "$selected_sink" | sed 's/^[🎧🔌📺🔊🎵] //')
+
+# Notificação melhorada
+if [ $moved_streams -gt 0 ]; then
+    notify-send "🎵 Áudio Redirecionado" "Dispositivo: $friendly_name\nStreams movidos: $moved_streams" -t 3000
+else
+    notify-send "🎵 Dispositivo de Áudio Alterado" "Novo padrão: $friendly_name" -t 3000
+fi
+
+# Optional: Set volume to a reasonable level for new device
+# Uncomment the next line if you want to set volume to 70% when switching
+# pactl set-sink-volume "$selected_sink" 70%
 

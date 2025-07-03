@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Force start autostart applications
+echo "🚀 Force Starting Autostart Applications"
+echo "========================================"
+
+# Get terminal from AwesomeWM config
+TERMINAL="x-terminal-emulator"
+
+echo "1. 🖥️  Starting Terminal with Nvim in Tag 1..."
+# Switch to tag 1 and start terminal
+awesome-client 'awful.tag.find_by_name(awful.screen.focused(), "󰨞"):view_only()'
+sleep 1
+$TERMINAL -e nvim &
+sleep 2
+
+echo "2. 💬 Starting Slack in Tag 2..."
+# Switch to tag 2 and start slack
+awesome-client 'awful.tag.find_by_name(awful.screen.focused(), "󰒱"):view_only()'
+sleep 1
+slack &
+sleep 3
+
+echo "3. 🌐 Starting Chrome in Tag 3..."
+# Switch to tag 3 and start chrome
+awesome-client 'awful.tag.find_by_name(awful.screen.focused(), "󰖟"):view_only()'
+sleep 1
+google-chrome-stable --profile-directory='Profile 1' &
+sleep 3
+
+echo "4. 🔧 Ensuring System Applets are running..."
+# Restart applets if needed
+pgrep -x nm-applet >/dev/null || nm-applet &
+pgrep -x blueman-applet >/dev/null || blueman-applet &
+pgrep -x pasystray >/dev/null || pasystray &
+
+echo ""
+echo "✅ All applications started!"
+echo ""
+echo "📊 Current Status:"
+/home/augusto/.config/awesome/bin/debug_autostart
