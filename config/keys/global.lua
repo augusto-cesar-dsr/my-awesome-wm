@@ -9,8 +9,8 @@ local scratchpads = require("config.scratchpads")
 -- Garantir que modkey está definido
 modkey = modkey or "Mod4"
 
--- Caminho dinâmico para os scripts
-local scripts_path = awesome_config_path .. "/bin/"
+-- Caminho dinâmico para os scripts (mais robusto)
+local scripts_path = (awesome_config_path or os.getenv("HOME") .. "/.config/awesome") .. "/bin/"
 
 -- Global keys
 local globalkeys = gears.table.join(

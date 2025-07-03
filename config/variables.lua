@@ -1,6 +1,9 @@
 -- Global variables and settings
 local awful = require("awful")
 
+-- Dynamic paths
+awesome_config_path = os.getenv("HOME") .. "/.config/awesome"
+
 -- Applications
 terminal = "x-terminal-emulator"
 editor = os.getenv("EDITOR") or "nvim"
