@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Manual autostart script - fallback para quando o autostart automático falha
+
+echo "Iniciando aplicações manualmente..."
+
+# Função para verificar se processo está rodando
+is_running() {
+    pgrep -f "$1" > /dev/null
+}
+
+# System tray applets
+if ! is_running "nm-applet"; then
+    echo "Iniciando nm-applet..."
+    nm-applet &
+    sleep 1
+fi
+
+if ! is_running "blueman-applet"; then
+    echo "Iniciando blueman-applet..."
+    blueman-applet &
+    sleep 1
+fi
+
+if ! is_running "pasystray"; then
+    echo "Iniciando pasystray..."
+    pasystray &
+    sleep 1
+fi
+
+if ! is_running "solaar"; then
+    echo "Iniciando solaar..."
+    solaar &
+    sleep 1
+fi
+
+# Main applications
+if ! is_running "nvim"; then
+    echo "Iniciando terminal com nvim..."
+    x-terminal-emulator -e nvim &
+    sleep 1
+fi
+
+if ! is_running "slack"; then
+    echo "Iniciando slack..."
+    slack &
+    sleep 2
+fi
+
+if ! is_running "google-chrome.*--type=browser"; then
+    echo "Iniciando chrome..."
+    google-chrome-stable --profile-directory='Profile 1' &
+fi
+
+echo "Autostart manual concluído!"

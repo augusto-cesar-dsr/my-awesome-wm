@@ -18,6 +18,7 @@ local globalkeys = gears.table.join(
   awful.key({ modkey }, "s", hotkeys_popup.show_help, { description = "show help", group = "awesome" }),
   awful.key({ modkey, "Control" }, "r", awesome.restart, { description = "reload awesome", group = "awesome" }),
   awful.key({ modkey, "Shift" }, "q", awesome.quit, { description = "quit awesome", group = "awesome" }),
+  awful.key({ modkey, "Control" }, "a", function() awful.spawn(awesome_config_path .. "/bin/manual_autostart") end, { description = "manual autostart", group = "awesome" }),
 
   -- Tag navigation
   awful.key({ modkey }, "Left", awful.tag.viewprev, { description = "view previous", group = "tag" }),
@@ -107,7 +108,7 @@ local globalkeys = gears.table.join(
   end, { description = "display options", group = "my managements" }),
 
   -- Power options
-  awful.key({ modkey, "Control" }, "l", function()
+  awful.key({ modkey }, "l", function()
     awful.spawn("bash " .. scripts_path .. "logout")
   end, { description = "power options", group = "my managements" }),
 

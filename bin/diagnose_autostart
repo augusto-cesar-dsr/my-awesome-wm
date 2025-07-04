@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Script de diagnóstico do autostart
+
+LOG_FILE="/tmp/autostart_diagnosis.log"
+
+echo "=== DIAGNÓSTICO AUTOSTART ===" > "$LOG_FILE"
+echo "Data: $(date)" >> "$LOG_FILE"
+echo "Usuário: $USER" >> "$LOG_FILE"
+echo "DISPLAY: $DISPLAY" >> "$LOG_FILE"
+echo "XDG_CURRENT_DESKTOP: $XDG_CURRENT_DESKTOP" >> "$LOG_FILE"
+echo "XDG_SESSION_TYPE: $XDG_SESSION_TYPE" >> "$LOG_FILE"
+echo "" >> "$LOG_FILE"
+
+# Verificar se AwesomeWM está rodando
+echo "=== AWESOME WM ===" >> "$LOG_FILE"
+if pgrep -f awesome > /dev/null; then
+    echo "✓ AwesomeWM está rodando" >> "$LOG_FILE"
+    echo "PIDs: $(pgrep -f awesome | tr '\n' ' ')" >> "$LOG_FILE"
+else
+    echo "✗ AwesomeWM NÃO está rodando" >> "$LOG_FILE"
+fi
+echo "" >> "$LOG_FILE"
+
+# Verificar processos que deveriam estar rodando
+echo "=== PROCESSOS ESPERADOS ===" >> "$LOG_FILE"
+
+processes=("nm-applet" "blueman-applet" "pasystray" "solaar" "slack" "nvim" "google-chrome")
+
+for process in "${processes[@]}"; do
+    if pgrep -f "$process" > /dev/null; then
+        echo "✓ $process está rodando" >> "$LOG_FILE"
+    else
+        echo "✗ $process NÃO está rodando" >> "$LOG_FILE"
+    fi
+done
+echo "" >> "$LOG_FILE"
+
+# Verificar se os binários existem
+echo "=== BINÁRIOS DISPONÍVEIS ===" >> "$LOG_FILE"
+binaries=("nm-applet" "blueman-applet" "pasystray" "solaar" "slack" "nvim" "google-chrome-stable" "x-terminal-emulator")
+
+for binary in "${binaries[@]}"; do
+    if which "$binary" > /dev/null 2>&1; then
+        echo "✓ $binary encontrado em $(which "$binary")" >> "$LOG_FILE"
+    else
+        echo "✗ $binary NÃO encontrado" >> "$LOG_FILE"
+    fi
+done
+echo "" >> "$LOG_FILE"
+
+# Verificar logs do autostart
+echo "=== LOGS AUTOSTART ===" >> "$LOG_FILE"
+if [ -f "/tmp/awesome_autostart.log" ]; then
+    echo "Log do autostart encontrado:" >> "$LOG_FILE"
+    tail -20 /tmp/awesome_autostart.log >> "$LOG_FILE"
+else
+    echo "Log do autostart NÃO encontrado" >> "$LOG_FILE"
+fi
+echo "" >> "$LOG_FILE"
+
+# Verificar sistema tray
+echo "=== SISTEMA TRAY ===" >> "$LOG_FILE"
+if pgrep -f "tray\|systray" > /dev/null; then
+    echo "✓ Sistema tray detectado" >> "$LOG_FILE"
+    echo "Processos: $(pgrep -f 'tray\|systray' | tr '\n' ' ')" >> "$LOG_FILE"
+else
+    echo "? Sistema tray não detectado claramente" >> "$LOG_FILE"
+fi
+
+echo "" >> "$LOG_FILE"
+echo "=== FIM DIAGNÓSTICO ===" >> "$LOG_FILE"
+
+echo "Diagnóstico salvo em: $LOG_FILE"
+cat "$LOG_FILE"
