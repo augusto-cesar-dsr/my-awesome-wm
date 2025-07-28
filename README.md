@@ -37,9 +37,9 @@ Configuração modular e otimizada do AwesomeWM com foco em produtividade.
 - 󰨞 **Tag 1**: Editor (Nvim/VSCode)
 - 󰒱 **Tag 2**: Chat (Slack)  
 - 󰖟 **Tag 3**: Browser (Chrome)
-- 󰉋 **Tag 4**: Arquivos (Nautilus)
-- 󰝚 **Tag 5**: Música
-- 󰍹 **Tag 6**: Terminal
+- 󰆍 **Tag 4**: Terminal
+- 󰉋 **Tag 5**: Arquivos (Nautilus)
+- 󰍹 **Tag 6**: Comunicação (Telegram/Discord)
 - 󰊻 **Tag 7**: Documentos
 - 󰟴 **Tag 8**: Configurações
 - 󰐃 **Tag 9**: Diversos

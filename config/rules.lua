@@ -181,7 +181,7 @@ awful.rules.rules = {
     },
   },
 
-  -- Nautilus na Tag 5 (nova posição)
+  -- Nautilus na Tag 5
   {
     rule_any = {
       class = { "Nautilus", "nautilus", "Thunar", "thunar" },
@@ -191,6 +191,31 @@ awful.rules.rules = {
       tag = "󰉋",
       callback = function(c)
         local tag = awful.tag.find_by_name(awful.screen.focused(), "󰉋")
+        if tag then
+          c:move_to_tag(tag)
+        end
+      end,
+    },
+  },
+
+  -- Telegram e Discord na Tag 6
+  {
+    rule_any = {
+      class = { 
+        "TelegramDesktop", 
+        "telegram-desktop", 
+        "Telegram",
+        "Discord", 
+        "discord",
+        "DiscordCanary",
+        "discord-canary"
+      },
+    },
+    properties = {
+      screen = 1,
+      tag = "󰍹",
+      callback = function(c)
+        local tag = awful.tag.find_by_name(awful.screen.focused(), "󰍹")
         if tag then
           c:move_to_tag(tag)
         end
