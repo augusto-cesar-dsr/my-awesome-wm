@@ -49,10 +49,12 @@ local function update_volume()
             end
             
             -- Color coding
-            if volume > 100 then
+            if volume > 150 then
               volume_text.markup = string.format('<span color="#ff6b6b">%d%%</span>', volume)
+            elseif volume > 100 then
+              volume_text.markup = string.format('<span color="#ffa500">%d%%</span>', volume)
             elseif volume > 80 then
-              volume_text.markup = string.format('<span color="#feca57">%d%%</span>', volume)
+              volume_text.markup = string.format('<span color="#fcca57">%d%%</span>', volume)
             else
               volume_text.markup = string.format('<span color="#48dbfb">%d%%</span>', volume)
             end
