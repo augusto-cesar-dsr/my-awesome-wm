@@ -23,7 +23,7 @@ network_widget.widget = wibox.widget {
 }
 
 -- Network interfaces to monitor (based on your system)
-local interfaces = {"enp1s0", "wlp0s20f3"}
+local interfaces = {"enp1s0", "wlp0s20f3", "wlp1s0"}
 
 -- Variables to store previous values for calculating speed
 local prev_rx = {}
